@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Encoo Recorder",
+    "description": "插件名称"
+  },
+  "extDescription": {
+    "message": "Component for browser interaction",
+    "description": "插件使用描述"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Demo",
+    "description": "插件名称"
+  },
+  "extDescription": {
+    "message": "编辑器与浏览器的交互组件",
+    "description": "插件使用描述"
+  }
+}

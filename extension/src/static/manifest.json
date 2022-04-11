@@ -1,0 +1,12 @@
+{
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "default_locale": "zh_CN",
+  "background": {
+    "service_worker": "backgroundloader.js"
+  },
+  "manifest_version": 3,
+  "permissions": ["tabs", "bookmarks"],
+  "version": "0.0.1",
+  "host_permissions": ["*://*/*"]
+}
