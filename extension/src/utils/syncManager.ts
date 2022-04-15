@@ -4,13 +4,13 @@ export type ISyncCallback = (urlInfo: UrlInfo) => void;
 export interface ISyncStrategy {
   onOpenNewTab(tabId: number): void;
   onUrlChange(tabId: number, url: string): void;
-  syncCallback(callback: ISyncCallback): void;
+  registerSyncCallback(callback: ISyncCallback): void;
 }
 class SyncManager {
   private syncStragyHandle: ISyncStrategy;
   updateStrategy(stragyHandle: ISyncStrategy) {
     this.syncStragyHandle = stragyHandle;
-    this.syncStragyHandle.syncCallback((urlInfo) => {
+    this.syncStragyHandle.registerSyncCallback((urlInfo) => {
       SendToRemote(urlInfo);
     });
   }

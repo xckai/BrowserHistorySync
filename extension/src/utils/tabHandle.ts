@@ -21,15 +21,13 @@ export async function onNewTabCreate(tabid: number) {
       handleFavourIcon({
         Url: tab.url,
         Title: tab.title,
-        Status: tab.status,
-        FavourIconUrl: tab.favIconUrl,
+        FaviconUrl: tab.favIconUrl,
       });
     } else {
       crtInfo = {
         Url: tab.url,
         Title: tab.title,
-        Status: tab.status,
-        FavourIconUrl: tab.favIconUrl,
+        FaviconUrl: tab.favIconUrl,
       };
       if (retryTime++ < 10) {
         setTimeout(getTabInfo, 1000);

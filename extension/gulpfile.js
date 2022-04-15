@@ -27,7 +27,7 @@ gulp.task("clear-dist", () => {
 });
 gulp.task("build", () => {
   const staticFiles = gulp.src([
-    path.resolve(__dirname, "./src/static/**/*.*"),
+    path.resolve(__dirname, "./src/static/**/*.*"), path.resolve(__dirname, "./src/option.html")
   ]);
   const commonFiles$ = gulp
     .src([
@@ -41,13 +41,21 @@ gulp.task("build", () => {
     .pipe(uglify());
   const backgroundFiles$ = gulp
     .src([path.resolve(__dirname, "./src/background.ts")])
-    .pipe(getTsProject({ module: "amd", outFile: "bundle.js" }))
+    .pipe(getTsProject({ module: "amd", outFile: "background.js" }))
     .on("error", function (err) {
       console.log(err.toString());
       this.emit("end");
     })
     .js.pipe(inject.append("requirejs(['background']);"));
-  return merge2([staticFiles, commonFiles$, backgroundFiles$]).pipe(
+  const optionjs$ = gulp
+    .src([path.resolve(__dirname, "./src/option.ts")])
+    .pipe(getTsProject({ module: "amd", outFile: "option.js" }))
+    .on("error", function (err) {
+      console.log(err.toString());
+      this.emit("end");
+    })
+    .js;
+  return merge2([staticFiles, commonFiles$, backgroundFiles$, optionjs$]).pipe(
     gulp.dest(path.resolve(__dirname, "./dist"))
   );
 });
@@ -73,14 +81,22 @@ gulp.task(
               this.emit("end");
             })
             .js.pipe(inject.append("requirejs(['background']);"));
-          merge2([backgroundFiles$])
+          const optionjs$ = gulp
+            .src([path.resolve(__dirname, "./src/option.ts")])
+            .pipe(getTsProject({ module: "amd", outFile: "option.js" }))
+            .on("error", function (err) {
+              console.log(err.toString());
+              this.emit("end");
+            })
+            .js;
+          merge2([backgroundFiles$, optionjs$])
             .pipe(gulp.dest(path.resolve(__dirname, "./dist")))
             .once("end", () => {
               console.log(
                 "\x1B[32m%s\x1B[0m",
                 "Build task done. time cost : " +
-                  Math.round((new Date().getTime() - startTime) / 1000) +
-                  "s"
+                Math.round((new Date().getTime() - startTime) / 1000) +
+                "s"
               );
               isBuilding = false;
             });

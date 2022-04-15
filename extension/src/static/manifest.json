@@ -5,8 +5,12 @@
   "background": {
     "service_worker": "backgroundloader.js"
   },
+  "options_ui": {
+    "page": "option.html",
+    "open_in_tab": false
+  },
   "manifest_version": 3,
-  "permissions": ["tabs", "bookmarks"],
+  "permissions": ["tabs", "bookmarks","storage","alarms"],
   "version": "0.0.1",
   "host_permissions": ["*://*/*"]
 }

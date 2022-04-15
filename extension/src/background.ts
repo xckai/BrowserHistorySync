@@ -1,12 +1,10 @@
 import { syncManager } from "utils/syncManager";
-import { onNewTabCreate, onTabUrlUpdate } from "utils/TabHandle";
+import { TimeBasedSyncHandle } from "utils/timeBasedSyncHandle";
 
 export interface UrlInfo {
   Url: string;
   Title: string;
-  Status: string;
-  FavourIcon?: string;
-  FavourIconUrl?: string;
+  FaviconUrl?: string;
 }
 
 // browser.tabs.onCreated.addListener(function (tab: browser.tabs.Tab) {
@@ -14,6 +12,8 @@ export interface UrlInfo {
 //     onNewTabCreate(tab.id);
 //   }
 // });
+syncManager.updateStrategy(new TimeBasedSyncHandle());
+
 browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   if (changeInfo.url) {
     console.log("update", changeInfo, tabId);
