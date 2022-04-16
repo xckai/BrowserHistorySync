@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-
-namespace SyncMangerApi.Models
+﻿namespace SyncMangerApi.Models.DB
 {
     public partial class UrlHistory
     { 

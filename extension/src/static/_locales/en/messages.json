@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "Encoo Recorder",
+    "message": "BrowserHistorySync",
     "description": "插件名称"
   },
   "extDescription": {
-    "message": "Component for browser interaction",
+    "message": "Sync for browser's url history",
     "description": "插件使用描述"
   }
 }

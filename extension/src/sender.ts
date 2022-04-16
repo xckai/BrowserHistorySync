@@ -1,6 +1,10 @@
 import { UrlInfo } from "background";
 
 let sendingMessageQueue: Array<UrlInfo> = [];
+let browserType = "Chrome";
+if ((navigator.userAgent.indexOf("Edg") != -1)) {
+  browserType = "Edge"
+}
 
 async function post(url = '', data = {}) {
   // Default options are marked with *
@@ -22,9 +26,33 @@ async function post(url = '', data = {}) {
   }
   return; // parses JSON response into native JavaScript objects
 }
-
+export async function batchSyncWithRemoteServer(urlInfos: Array<UrlInfo>) {
+  const { syncManagerServerUrl, equipmentName
+  } = await browser.storage.local.get(["syncManagerServerUrl", "equipmentName"]);
+  if (!syncManagerServerUrl) {
+    console.error("Remote server URL is null!!")
+  }
+  console.log("upload: ", urlInfos, syncManagerServerUrl)
+  await post(syncManagerServerUrl, {
+    equipmentInfo: {
+      equipmentName,
+      browserType
+    },
+    historyList: urlInfos
+  })
+}
 export async function SendToRemote(urlInfo: UrlInfo) {
-  const { syncManagerServerUrl } = await browser.storage.sync.get(["syncManagerServerUrl"]);
-  console.log(syncManagerServerUrl)
-  await post(syncManagerServerUrl, [urlInfo])
+  const { syncManagerServerUrl, equipmentName
+  } = await browser.storage.local.get(["syncManagerServerUrl", "equipmentName"]);
+  if (!syncManagerServerUrl) {
+    console.error("Remote server URL is null!!")
+  }
+  console.log("upload: ", urlInfo, syncManagerServerUrl)
+  await post(syncManagerServerUrl, {
+    equipmentInfo: {
+      equipmentName,
+      browserType
+    },
+    historyList: [urlInfo]
+  })
 }

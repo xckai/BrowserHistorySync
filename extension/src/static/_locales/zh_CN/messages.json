@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "Demo",
-    "description": "插件名称"
+    "message": "BrowserHistorySync",
+    "description": "浏览器历史同步创建"
   },
   "extDescription": {
-    "message": "编辑器与浏览器的交互组件",
-    "description": "插件使用描述"
+    "message": "同步浏览器历史",
+    "description": ""
   }
 }

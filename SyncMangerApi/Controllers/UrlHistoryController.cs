@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SyncMangerApi.Models;
+using SyncMangerApi.Models.DB;
+using SyncMangerApi.Services;
 
 namespace SyncMangerApi.Controllers
 {
@@ -13,39 +15,22 @@ namespace SyncMangerApi.Controllers
     [ApiController]
     public class UrlHistoryController : ControllerBase
     {
-        private BrowserHistoryContext _db;
+        private readonly DbSyncService _dbSyncService;
 
-        public UrlHistoryController(BrowserHistoryContext db)
+        public UrlHistoryController(DbSyncService dbSyncService)
         {
-            _db = db;
+            _dbSyncService = dbSyncService;
         }
         [HttpPost("BatchSyncUrlHistory")]
-        public async Task<ActionResult> BatchSyncUrlHistory([FromBody] List<HistoryDetail> histories)
+        public async Task<ActionResult> BatchSyncUrlHistory(BatchSyncRequestDto batchSyncRequestDto)
         {
-            await _db.UrlHistories.AddRangeAsync(histories.Select(detail => new UrlHistory()
-            {
-                HistoryDetail = detail,
-                Timestamp = DateTime.UtcNow
-            }));
-           await _db.SaveChangesAsync();
+            await _dbSyncService.BatchSync(batchSyncRequestDto.HistoryList, batchSyncRequestDto.EquipmentInfo);
            return NoContent();
         }
-        [HttpGet("SearchUrlHistory")]
-        public async Task<List<HistoryDetail?>> SearchUrlHistory(string? keywords)
+        [HttpGet("QueryUrlHistory")]
+        public async Task<Pagination<HistoryDetail>> QueryUrlHistory(string keyword="",int pageSize =10, int pageIndex =1)
         {
-            if (String.IsNullOrWhiteSpace(keywords))
-            {
-                return await _db.UrlHistories.OrderBy(
-                    history => history.Timestamp).Take(10).Select(urlHistory =>urlHistory.HistoryDetail ).ToListAsync();
-            }
-            else
-            {
-                return await _db.UrlHistories.Where(urlHistory =>
-                    urlHistory.HistoryDetail != null && (urlHistory.HistoryDetail.Title.Contains(keywords) ||
-                                                         urlHistory.HistoryDetail.Url.Contains(keywords))).OrderBy(
-                    history => history.Timestamp).Take(10).Select(urlHistory => urlHistory.HistoryDetail).ToListAsync();
-            }
-           
+            return await _dbSyncService.Query(keyword, pageSize, pageIndex);
         }
     }
 }

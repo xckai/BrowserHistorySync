@@ -7,7 +7,16 @@
   },
   "options_ui": {
     "page": "option.html",
-    "open_in_tab": false
+    "open_in_tab": true
+  },
+  "action":{
+    "default_title": "My Bookmarks",
+    "default_icon": "128.png"
+  },
+  "icons": {
+    "16": "128.png",
+    "48": "128.png",
+    "128": "128.png"
   },
   "manifest_version": 3,
   "permissions": ["tabs", "bookmarks","storage","alarms"],

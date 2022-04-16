@@ -1,5 +1,4 @@
-import { syncManager } from "utils/syncManager";
-import { TimeBasedSyncHandle } from "utils/timeBasedSyncHandle";
+import { syncManager } from "syncManager";
 
 export interface UrlInfo {
   Url: string;
@@ -7,16 +6,9 @@ export interface UrlInfo {
   FaviconUrl?: string;
 }
 
-// browser.tabs.onCreated.addListener(function (tab: browser.tabs.Tab) {
-//   if (tab.id) {
-//     onNewTabCreate(tab.id);
-//   }
-// });
-syncManager.updateStrategy(new TimeBasedSyncHandle());
-
+syncManager.useSyncStrategy("TimerBasedSync")
 browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   if (changeInfo.url) {
-    console.log("update", changeInfo, tabId);
     syncManager.onTabUpdate(tabId, changeInfo);
   }
 });
