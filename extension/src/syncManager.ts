@@ -1,10 +1,9 @@
 import { UrlInfo } from "background";
 import { TimerBasedSyncByAlarm } from "syncStrategy/timerBasedSyncByAlarm";
+import { TimerBasedSyncByContentJS } from "syncStrategy/timerBasedSyncByContentJS";
 import { batchSyncWithRemoteServer, SendToRemote } from "./sender";
 export type IBatchSyncCallback = (urlInfos: Array<UrlInfo>) => void;
 export interface ISyncStrategy {
-  onOpenNewTab(tabId: number): void;
-  onUrlChange(tabId: number, url: string): void;
   config(callback: IBatchSyncCallback): void;
   distory(): void;
 }
@@ -14,6 +13,9 @@ class SyncManager {
     switch (name) {
       case "TimerBasedSync":
         this.updateStrategy(new TimerBasedSyncByAlarm());
+        break;
+      case "TimerBasedSyncByContentJS":
+        this.updateStrategy(new TimerBasedSyncByContentJS());
         break;
       default:
         throw new Error("Error！ can not found sync strategy named: " + name);
@@ -27,14 +29,6 @@ class SyncManager {
     this.currentSyncHandler.config((urlInfos) => {
       batchSyncWithRemoteServer(urlInfos);
     });
-  }
-  onTabUpdate(tabId: number, updateInfo: browser.tabs._OnUpdatedChangeInfo) {
-    if (updateInfo.url) {
-      this.currentSyncHandler?.onUrlChange(tabId, updateInfo.url);
-    }
-  }
-  onTabCreate(tab: browser.tabs.Tab) {
-    this.currentSyncHandler?.onOpenNewTab(tab.id);
   }
 }
 export const syncManager = new SyncManager();

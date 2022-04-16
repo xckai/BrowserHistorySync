@@ -1,13 +1,14 @@
 import { IBatchSyncCallback, ISyncStrategy } from "../syncManager";
 export class TimerBasedSyncByAlarm implements ISyncStrategy {
   distory(): void {
-    throw new Error("Method not implemented.");
+    browser.tabs.onUpdated.removeListener(this.onUrlChange.bind(this));
   }
   _batchSyncCallback: IBatchSyncCallback;
-  onOpenNewTab(tabId: number): void {
-    throw new Error("Method not implemented.");
-  }
-  async onUrlChange(tabId: number, url: string) {
+  async onUrlChange(tabId: number, changeInfo: browser.tabs._OnUpdatedChangeInfo) {
+    const url = changeInfo.url;
+    if (!url) {
+      return
+    }
     let handling = [];
     let { timeBasedHistoryRecoders: recoders } = await browser.storage.local.get(["timeBasedHistoryRecoders"]);
     recoders = recoders ?? [];
@@ -31,13 +32,14 @@ export class TimerBasedSyncByAlarm implements ISyncStrategy {
   }
   config(callback: IBatchSyncCallback): void {
     this._batchSyncCallback = callback;
+    browser.tabs.onUpdated.addListener(this.onUrlChange.bind(this));
     browser.alarms.onAlarm.addListener((alarm) => {
       this.checkRecoderByTimer(alarm)
     });
   }
   async checkRecoderByTimer(alarm: browser.alarms.Alarm) {
     console.log("checked by timer", alarm)
-    if (alarm.name !== "timerbasedSyncTimer") {
+    if (alarm == undefined || alarm.name !== "timerbasedSyncTimer") {
       return;
     }
 

@@ -55,7 +55,15 @@ gulp.task("build", () => {
       this.emit("end");
     })
     .js;
-  return merge2([staticFiles, commonFiles$, backgroundFiles$, optionjs$]).pipe(
+  const content$ = gulp
+    .src([path.resolve(__dirname, "./src/content.ts")])
+    .pipe(getTsProject({ module: "amd", outFile: "content.js" }))
+    .on("error", function (err) {
+      console.log(err.toString());
+      this.emit("end");
+    })
+    .js;
+  return merge2([staticFiles, commonFiles$, backgroundFiles$, optionjs$, content$]).pipe(
     gulp.dest(path.resolve(__dirname, "./dist"))
   );
 });
@@ -89,7 +97,15 @@ gulp.task(
               this.emit("end");
             })
             .js;
-          merge2([backgroundFiles$, optionjs$])
+          const content$ = gulp
+            .src([path.resolve(__dirname, "./src/content.ts")])
+            .pipe(getTsProject({ module: "amd", outFile: "content.js" }))
+            .on("error", function (err) {
+              console.log(err.toString());
+              this.emit("end");
+            })
+            .js;
+          merge2([backgroundFiles$, optionjs$, content$])
             .pipe(gulp.dest(path.resolve(__dirname, "./dist")))
             .once("end", () => {
               console.log(

@@ -6,9 +6,5 @@ export interface UrlInfo {
   FaviconUrl?: string;
 }
 
-syncManager.useSyncStrategy("TimerBasedSync")
-browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
-  if (changeInfo.url) {
-    syncManager.onTabUpdate(tabId, changeInfo);
-  }
-});
+syncManager.useSyncStrategy("TimerBasedSyncByContentJS")
+

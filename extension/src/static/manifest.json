@@ -5,11 +5,24 @@
   "background": {
     "service_worker": "backgroundloader.js"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": false,
+      "run_at": "document_start",
+      "js": [
+        "common.js",
+        "content.js"
+      ]
+    }
+  ],
   "options_ui": {
     "page": "option.html",
     "open_in_tab": true
   },
-  "action":{
+  "action": {
     "default_title": "My Bookmarks",
     "default_icon": "128.png"
   },
@@ -19,7 +32,15 @@
     "128": "128.png"
   },
   "manifest_version": 3,
-  "permissions": ["tabs", "bookmarks","storage","alarms"],
+  "permissions": [
+    "tabs",
+    "bookmarks",
+    "storage",
+    "alarms",
+    "webNavigation"
+  ],
   "version": "0.0.1",
-  "host_permissions": ["*://*/*"]
+  "host_permissions": [
+    "*://*/*"
+  ]
 }
