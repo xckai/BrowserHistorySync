@@ -13,7 +13,7 @@ RUN dotnet build "SyncMangerApi.sln" -c Release
 FROM build AS publish
 RUN dotnet publish "SyncMangerApi.sln" -c Release
 
-FROM base AS EncooAiPlatform
+FROM base AS SyncMangerApi
 WORKDIR /SyncMangerApi
 
-COPY --from=publish /SyncMangerApi/bin/Release/net6.0/publish /
+COPY --from=publish /SyncMangerApi/bin/Release/net6.0/publish SyncMangerApi/
