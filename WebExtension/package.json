@@ -1,8 +1,9 @@
 {
-  "name": "chrome-extension-demo",
+  "name": "browser_history_sync_web_extension",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "cross-env gulp build",
     "start": "cross-env gulp dev"

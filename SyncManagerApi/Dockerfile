@@ -17,3 +17,4 @@ FROM base AS SyncManagerApi
 WORKDIR /SyncManagerApi
 
 COPY --from=publish /SyncManagerApi/bin/Release/net6.0/publish SyncManagerApi/
+ENTRYPOINT ["/bin/bash","-c", "cd SyncManagerApi && dotnet SyncManagerApi.dll"]
