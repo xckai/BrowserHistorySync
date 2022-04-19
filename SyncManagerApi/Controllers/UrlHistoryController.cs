@@ -22,9 +22,9 @@ namespace SyncManagerApi.Controllers
            return NoContent();
         }
         [HttpGet("QueryUrlHistory")]
-        public async Task<Pagination<HistoryDetail>> QueryUrlHistory(string keyword="",int pageSize =10, int pageIndex =1)
+        public async Task<Pagination<HistoryDetail>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
         {
-            return await _dbSyncService.Query(keyword, pageSize, pageIndex);
+            return await _dbSyncService.Query(keyword ?? "", pageSize, pageIndex);
         }
     }
 }

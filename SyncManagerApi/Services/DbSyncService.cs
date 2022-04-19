@@ -43,15 +43,18 @@ public class DbSyncService : ISyncService
             ? _db.UrlHistories
             : _db.UrlHistories.Where(history => history.HistoryDetail != null && history.HistoryDetail.Title != null && (history.HistoryDetail.Title.Contains(keyword)
                 || history.HistoryDetail.Url.Contains(keyword)));
-        var total = query.Count();
-        var data = query.OrderBy(urlHistory =>urlHistory.Timestamp).Take(new Range((pageIndex - 1) * pageSize, pageIndex * pageSize - 1))
-            .Select(urlHistory => urlHistory.HistoryDetail);
+        var total =query.Count();
+        var data = await query.OrderBy(urlHistory => urlHistory.Timestamp)
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .Select(urlHistory => urlHistory.HistoryDetail)
+            .ToListAsync();
         return new Pagination<HistoryDetail>()
         {
             Current = pageIndex,
             Total = total,
             PageSize = pageSize,
-            Data = (await data.ToListAsync())!
+            Data = data!
         };
     }
 }

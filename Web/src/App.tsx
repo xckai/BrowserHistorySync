@@ -3,7 +3,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import _ from 'lodash';
-
+import "./Static/CSS/App.less";
 export class App extends React.PureComponent {
   render() {
     return (

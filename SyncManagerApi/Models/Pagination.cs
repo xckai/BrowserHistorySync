@@ -4,8 +4,8 @@ namespace SyncManagerApi.Models;
 
 public class Pagination<T>
 {
-    public int Current;
-    public IList<HistoryDetail> Data;
-    public int PageSize;
-    public int Total;
+    public int Current { get; set; }
+    public IList<HistoryDetail> Data { get; set; }
+    public int PageSize { get; set; }
+    public int Total { get; set; }
 }
