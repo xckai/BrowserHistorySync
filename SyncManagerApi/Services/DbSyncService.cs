@@ -44,7 +44,7 @@ public class DbSyncService : ISyncService
             : _db.UrlHistories.Where(history => history.HistoryDetail != null && history.HistoryDetail.Title != null && (history.HistoryDetail.Title.Contains(keyword)
                 || history.HistoryDetail.Url.Contains(keyword)));
         var total =query.Count();
-        var data = await query.OrderBy(urlHistory => urlHistory.Timestamp)
+        var data = await query.OrderByDescending(urlHistory => urlHistory.Timestamp)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .Select(urlHistory => urlHistory.HistoryDetail)

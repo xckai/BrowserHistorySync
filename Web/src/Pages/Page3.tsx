@@ -1,6 +1,6 @@
-import React, { PureComponent, version } from 'react';
-import { Layout, Button, message, Space, Table, Tag, Input, Rate, DatePicker } from 'antd';
-import { PagesComponent } from '../Component/PagesComponent';
+import React, { PureComponent, version } from "react";
+import { Button, DatePicker } from "antd";
+import { PagesComponent } from "../Components/PagesComponent";
 export default function Page3() {
   return (
     <>

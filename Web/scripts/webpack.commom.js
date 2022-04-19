@@ -3,133 +3,139 @@
  * @LastEditTime: 2021-05-03 15:05:43
  * @Description:
  */
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
-  mode: 'production',
+  mode: "production",
   entry: {
-    index: './src/Index.tsx'
+    index: "./src/index.tsx",
   },
-  plugins: [new HtmlWebpackPlugin({ template: 'src/index.html' }), new ForkTsCheckerWebpackPlugin(), new WebpackManifestPlugin()],
+  plugins: [
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /zh-cn|en-gb/),
+    new HtmlWebpackPlugin({ template: "src/index.html" }),
+    new ForkTsCheckerWebpackPlugin(),
+    new WebpackManifestPlugin(),
+  ],
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader']
+        use: ["file-loader"],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: ['file-loader']
+        use: ["file-loader"],
       },
       {
         test: /\.(ts|js)x?$/,
-        exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
             presets: [
               [
-                '@babel/preset-env',
+                "@babel/preset-env",
                 {
-                  useBuiltIns: 'entry',
+                  useBuiltIns: "entry",
                   corejs: {
-                    version: '3',
-                    proposals: true
-                  }
-                }
+                    version: "3",
+                    proposals: true,
+                  },
+                },
               ],
-              '@babel/preset-react',
-              '@babel/preset-typescript'
+              "@babel/preset-react",
+              "@babel/preset-typescript",
             ],
             plugins: [
               [
-                '@babel/plugin-proposal-decorators',
+                "@babel/plugin-proposal-decorators",
                 {
-                  legacy: true
-                }
+                  legacy: true,
+                },
               ],
               [
-                '@babel/plugin-proposal-private-property-in-object',
+                "@babel/plugin-proposal-private-property-in-object",
                 {
-                  loose: true
-                }
+                  loose: true,
+                },
               ],
               [
-                '@babel/plugin-proposal-private-methods',
+                "@babel/plugin-proposal-private-methods",
                 {
-                  loose: true
-                }
+                  loose: true,
+                },
               ],
               [
-                '@babel/plugin-proposal-class-properties',
+                "@babel/plugin-proposal-class-properties",
                 {
-                  loose: true
-                }
+                  loose: true,
+                },
               ],
               [
-                'import',
+                "import",
                 {
-                  libraryName: 'antd',
-                  libraryDirectory: 'es',
-                  style: true
-                }
-              ]
-            ]
-          }
-        }
+                  libraryName: "antd",
+                  libraryDirectory: "lib",
+                  style: true,
+                },
+                "antd",
+              ],
+            ],
+          },
+        },
       },
       {
         test: /\.less$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader",
           },
           {
-            loader: 'css-loader'
+            loader: "css-loader",
           },
           {
-            loader: 'postcss-loader'
+            loader: "postcss-loader",
           },
           {
-            loader: 'less-loader',
+            loader: "less-loader",
             options: {
               lessOptions: {
-                javascriptEnabled: true
+                javascriptEnabled: true,
                 // modifyVars: {
                 //   'primary-color': 'red'
                 // }
-              }
-            }
-          }
-        ]
-      }
-    ]
+              },
+            },
+          },
+        ],
+      },
+    ],
   },
   output: {
-    filename: '[name].[contenthash:8].js',
-    path: path.resolve(__dirname, '../dist')
+    filename: "[name].[contenthash:8].js",
+    path: path.resolve(__dirname, "../dist"),
   },
   resolve: {
     plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.json" })],
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: [".tsx", ".ts", ".js"],
   },
   stats: {
     colors: true,
     env: true,
     errors: true,
-    performance: true
+    performance: true,
   },
   optimization: {
     splitChunks: {
-      chunks: 'async',
+      chunks: "async",
       minSize: 20000,
       minRemainingSize: 0,
       minChunks: 1,
@@ -142,7 +148,7 @@ module.exports = {
           priority: -20,
           reuseExistingChunk: true,
         },
-      }
-    }
-  }
+      },
+    },
+  },
 };
