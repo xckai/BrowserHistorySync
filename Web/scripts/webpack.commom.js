@@ -121,7 +121,7 @@ module.exports = {
   },
   output: {
     filename: "[name].[contenthash:8].js",
-    path: path.resolve(__dirname, "../dist"),
+    path: path.resolve(__dirname, "../../SyncManagerApi/wwwroot"),
   },
   resolve: {
     plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.json" })],

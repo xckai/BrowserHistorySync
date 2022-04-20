@@ -1,17 +1,24 @@
-import { List, Avatar, Input, Skeleton, Divider, Spin } from "antd";
+import { List, Avatar, Input, Skeleton, Divider, Spin, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { css, cx } from "@emotion/css";
 import { SearchOutlined } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroll-component";
-
 import {
   IHistoryInfo,
   syncManagerService,
 } from "src/services/syncManagerService";
 import moment from "moment";
-export function SearchListItem(props: { data: IHistoryInfo }) {
+import { hashIntoColor, sendCommandMsg } from "src/commonLibary/utils";
+export function SearchListItem(props: {
+  data: IHistoryInfo;
+  onClick(data: IHistoryInfo): void;
+}) {
   return (
-    <List.Item>
+    <List.Item
+      onClick={() => {
+        props.onClick(props.data);
+      }}
+    >
       <div
         className={css`
           display: flex;
@@ -22,11 +29,10 @@ export function SearchListItem(props: { data: IHistoryInfo }) {
         <Avatar
           className={css`
             min-width: 1.5rem;
-            min-height: 1.5rem;
-            margin-right: 0.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
-            margin-right: 0.2rem;
+            min-height: 1.5rem !important;
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+            margin-right: 0.2rem !important; ;
           `}
           src={props.data.faviconUrl}
         />
@@ -46,7 +52,9 @@ export function SearchListItem(props: { data: IHistoryInfo }) {
             </span>
           </div>
 
-          <div style={{ width: "100%", paddingTop: 5 }}>
+          <div
+            style={{ display: "flex", width: "100%", alignItems: "flex-end" }}
+          >
             <div
               style={{
                 fontSize: "80%",
@@ -54,10 +62,19 @@ export function SearchListItem(props: { data: IHistoryInfo }) {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
+                flex: 1,
+
+                paddingRight: 16,
               }}
             >
               {props.data.url}
             </div>
+            <Tag
+              style={{ borderRadius: 3 }}
+              color={hashIntoColor(props.data.equipmentName)}
+            >
+              {props.data.equipmentName}
+            </Tag>
           </div>
         </div>
       </div>
@@ -131,6 +148,12 @@ export function SearchList() {
     setLoading(true);
     getLatestHistoryList();
   }, []);
+  function onClickItem(data: IHistoryInfo) {
+    sendCommandMsg({
+      type: "OpenNewTab",
+      url: data.url,
+    });
+  }
   return (
     <>
       <div
@@ -158,10 +181,11 @@ export function SearchList() {
       <div
         id="scrollableDiv"
         style={{
-          height: 400,
+          height: "500px",
           overflow: "auto",
-          padding: "0 16px",
-          border: "1px solid rgba(140, 140, 140, 0.35)",
+          padding: "0 4px",
+          borderTop: "1px solid rgba(140, 140, 140, 0.35)",
+          borderBottom: "1px solid rgba(140, 140, 140, 0.35)",
         }}
       >
         <InfiniteScroll
@@ -189,11 +213,16 @@ export function SearchList() {
             className={css`
               margin: 0.5rem 0rem;
               .ant-list-item {
-                padding: 8px 0px !important;
+                padding: 8px 8px !important;
+                &:hover {
+                  background-color: gainsboro;
+                }
               }
             `}
             dataSource={historyList}
-            renderItem={(item: IHistoryInfo) => <SearchListItem data={item} />}
+            renderItem={(item: IHistoryInfo) => (
+              <SearchListItem data={item} onClick={onClickItem} />
+            )}
           />
         </InfiniteScroll>
       </div>

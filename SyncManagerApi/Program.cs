@@ -31,10 +31,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 app.UseCors("default");
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseStaticFiles();
 
+
+app.MapWhen(ctx => !ctx.Request.Path.StartsWithSegments("/api"), builder =>
+{
+    builder.Run(async (context) =>
+    {
+        context.Response.ContentType = "text/html";
+        await context.Response.SendFileAsync(Path.Combine("./wwwroot", "index.html"));
+    });
+});
 app.Run();

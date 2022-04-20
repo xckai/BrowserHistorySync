@@ -26,13 +26,17 @@
 
 <body>
     <section
-        style="height: 10rem; width: 40rem; padding: 1rem 2rem; display: flex; flex-direction: column;box-sizing: border-box;justify-content: center;">
+        style="height: 15rem; width: 40rem; padding: 1rem 2rem; display: flex; flex-direction: column;box-sizing: border-box;justify-content: center;">
         <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
-            <div style="margin-left: .5rem; width: 6rem;">服务器URL：</div>
-            <input id="url_input" style="height: 1rem; flex:1" type="text" value="http://">
+            <div style="margin-left: .5rem; width: 8rem;">DataServerURL：</div>
+            <input id="data_server_url_input" style="height: 1rem; flex:1" type="text" value="http://">
         </div>
         <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
-            <div style="margin-left: .5rem;width: 6rem;">设备名称: </div>
+            <div style="margin-left: .5rem; width: 8rem;">FontendServerURL：</div>
+            <input id="fontend_server_url_input" style="height: 1rem; flex:1" type="text" value="http://">
+        </div>
+        <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
+            <div style="margin-left: .5rem;width: 8rem;">EquipmentName: </div>
             <input id="equipment_name" style="height: 1rem; flex:1" type="text" value="">
         </div>
         <button id="save_button" style="align-self:flex-end; width: 4rem; margin: 1rem 0;">保存</button>

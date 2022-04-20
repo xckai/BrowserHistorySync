@@ -27,7 +27,7 @@ gulp.task("clear-dist", () => {
 });
 gulp.task("build", () => {
   const staticFiles = gulp.src([
-    path.resolve(__dirname, "./src/static/**/*.*"), path.resolve(__dirname, "./src/option.html")
+    path.resolve(__dirname, "./src/static/**/*.*"),
   ]);
   const commonFiles$ = gulp
     .src([
@@ -39,7 +39,7 @@ gulp.task("build", () => {
     ])
     .pipe(concat("common.js"))
     .pipe(uglify());
-  const backgroundFiles$ = gulp
+  const backgroundjs$ = gulp
     .src([path.resolve(__dirname, "./src/background.ts")])
     .pipe(getTsProject({ module: "amd", outFile: "background.js" }))
     .on("error", function (err) {
@@ -47,25 +47,41 @@ gulp.task("build", () => {
       this.emit("end");
     })
     .js.pipe(inject.append("requirejs(['background']);"));
-  const optionjs$ = gulp
-    .src([path.resolve(__dirname, "./src/option.ts")])
-    .pipe(getTsProject({ module: "amd", outFile: "option.js" }))
-    .on("error", function (err) {
-      console.log(err.toString());
-      this.emit("end");
-    })
-    .js;
-  const content$ = gulp
+  const contentjs$ = gulp
     .src([path.resolve(__dirname, "./src/content.ts")])
     .pipe(getTsProject({ module: "amd", outFile: "content.js" }))
     .on("error", function (err) {
       console.log(err.toString());
       this.emit("end");
-    })
-    .js;
-  return merge2([staticFiles, commonFiles$, backgroundFiles$, optionjs$, content$]).pipe(
-    gulp.dest(path.resolve(__dirname, "./dist"))
-  );
+    }).js;
+  const optionjs$ = gulp
+    .src([path.resolve(__dirname, "./src/pages/option.ts")])
+    .pipe(getTsProject({ module: "amd", outFile: "option.js" }))
+    .on("error", function (err) {
+      console.log(err.toString());
+      this.emit("end");
+    }).js;
+  const popup$ = gulp
+    .src([path.resolve(__dirname, "./src/pages/popup.ts")])
+    .pipe(getTsProject({ module: "amd", outFile: "popup.js" }))
+    .on("error", function (err) {
+      console.log(err.toString());
+      this.emit("end");
+    }).js;
+  const pagesHtml$ = gulp.src([
+    path.resolve(__dirname, "./src/pages/option.html"),
+    path.resolve(__dirname, "./src/pages/popup.html"),
+  ]);
+
+  return merge2([
+    staticFiles,
+    commonFiles$,
+    backgroundjs$,
+    optionjs$,
+    contentjs$,
+    pagesHtml$,
+    popup$,
+  ]).pipe(gulp.dest(path.resolve(__dirname, "./dist")));
 });
 
 gulp.task(
@@ -76,12 +92,12 @@ gulp.task(
       let isBuilding = false;
       let buildSchduleId;
       console.log("\x1B[32m%s\x1B[0m", "Start watching file changes...");
-      gulp.watch(["./src/**/*.ts"]).on("change", () => {
+      gulp.watch(["./src/**/*.ts", "./src/**/*.html"]).on("change", () => {
         function runBuild() {
           console.log("\x1B[32m%s\x1B[0m", "Rebuilding...");
           const startTime = new Date().getTime();
           isBuilding = true;
-          const backgroundFiles$ = gulp
+          const backgroundjs$ = gulp
             .src([path.resolve(__dirname, "./src/background.ts")])
             .pipe(getTsProject({ module: "amd", outFile: "background.js" }))
             .on("error", function (err) {
@@ -89,30 +105,39 @@ gulp.task(
               this.emit("end");
             })
             .js.pipe(inject.append("requirejs(['background']);"));
-          const optionjs$ = gulp
-            .src([path.resolve(__dirname, "./src/option.ts")])
-            .pipe(getTsProject({ module: "amd", outFile: "option.js" }))
-            .on("error", function (err) {
-              console.log(err.toString());
-              this.emit("end");
-            })
-            .js;
-          const content$ = gulp
+          const contentjs$ = gulp
             .src([path.resolve(__dirname, "./src/content.ts")])
             .pipe(getTsProject({ module: "amd", outFile: "content.js" }))
             .on("error", function (err) {
               console.log(err.toString());
               this.emit("end");
-            })
-            .js;
-          merge2([backgroundFiles$, optionjs$, content$])
+            }).js;
+          const optionjs$ = gulp
+            .src([path.resolve(__dirname, "./src/pages/option.ts")])
+            .pipe(getTsProject({ module: "amd", outFile: "option.js" }))
+            .on("error", function (err) {
+              console.log(err.toString());
+              this.emit("end");
+            }).js;
+          const popup$ = gulp
+            .src([path.resolve(__dirname, "./src/pages/popup.ts")])
+            .pipe(getTsProject({ module: "amd", outFile: "popup.js" }))
+            .on("error", function (err) {
+              console.log(err.toString());
+              this.emit("end");
+            }).js;
+          const pagesHtml$ = gulp.src([
+            path.resolve(__dirname, "./src/pages/option.html"),
+            path.resolve(__dirname, "./src/pages/popup.html"),
+          ]);
+          merge2([backgroundjs$, contentjs$, optionjs$, pagesHtml$, popup$])
             .pipe(gulp.dest(path.resolve(__dirname, "./dist")))
             .once("end", () => {
               console.log(
                 "\x1B[32m%s\x1B[0m",
                 "Build task done. time cost : " +
-                Math.round((new Date().getTime() - startTime) / 1000) +
-                "s"
+                  Math.round((new Date().getTime() - startTime) / 1000) +
+                  "s"
               );
               isBuilding = false;
             });

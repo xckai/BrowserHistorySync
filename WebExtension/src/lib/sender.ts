@@ -27,13 +27,14 @@ async function post(url = '', data = {}) {
   return; // parses JSON response into native JavaScript objects
 }
 export async function batchSyncWithRemoteServer(urlInfos: Array<UrlInfo>) {
-  const { syncManagerServerUrl, equipmentName
-  } = await browser.storage.local.get(["syncManagerServerUrl", "equipmentName"]);
-  if (!syncManagerServerUrl) {
+  const { dataServerUrl, equipmentName
+  } = await browser.storage.local.get(["dataServerUrl", "equipmentName"]);
+  if (!dataServerUrl) {
     console.error("Remote server URL is null!!")
   }
-  console.log("upload: ", urlInfos, syncManagerServerUrl)
-  await post(syncManagerServerUrl, {
+  console.log("upload: ", urlInfos, dataServerUrl)
+
+  await post(dataServerUrl + "/api/UrlHistory/BatchSyncUrlHistory", {
     equipmentInfo: {
       equipmentName,
       browserType
@@ -42,13 +43,13 @@ export async function batchSyncWithRemoteServer(urlInfos: Array<UrlInfo>) {
   })
 }
 export async function SendToRemote(urlInfo: UrlInfo) {
-  const { syncManagerServerUrl, equipmentName
-  } = await browser.storage.local.get(["syncManagerServerUrl", "equipmentName"]);
-  if (!syncManagerServerUrl) {
+  const { dataServerUrl, equipmentName
+  } = await browser.storage.local.get(["dataServerUrl", "equipmentName"]);
+  if (!dataServerUrl) {
     console.error("Remote server URL is null!!")
   }
-  console.log("upload: ", urlInfo, syncManagerServerUrl)
-  await post(syncManagerServerUrl, {
+  console.log("upload: ", urlInfo, dataServerUrl)
+  await post(dataServerUrl, {
     equipmentInfo: {
       equipmentName,
       browserType

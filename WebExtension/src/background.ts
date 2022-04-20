@@ -1,4 +1,4 @@
-import { syncManager } from "syncManager";
+import { syncManager } from "./lib/syncManager";
 
 export interface UrlInfo {
   Url: string;

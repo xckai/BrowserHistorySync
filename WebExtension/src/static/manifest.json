@@ -18,13 +18,17 @@
       ]
     }
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self'"
+  },
   "options_ui": {
     "page": "option.html",
     "open_in_tab": true
   },
   "action": {
     "default_title": "My Bookmarks",
-    "default_icon": "128.png"
+    "default_icon": "128.png",
+    "default_popup": "popup.html"
   },
   "icons": {
     "16": "128.png",

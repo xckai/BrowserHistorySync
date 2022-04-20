@@ -19,7 +19,12 @@ export interface IHistoryInfo {
 }
 class SyncManagerService {
   async queryHistoryList(keyword?: string) {
-    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>('http://localhost:5266/api/UrlHistory/QueryUrlHistory', {
+    console.log(window.syncManagerConfig)
+    if (!window.syncManagerConfig || !window.syncManagerConfig.dataServerUrl) {
+      throw new Error("No remote server API config");
+    }
+    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl
+      }/api/UrlHistory/QueryUrlHistory`, {
       params: {
         pageIndex: 1,
         pageSize: 10,
