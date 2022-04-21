@@ -3,7 +3,10 @@ import { Input, List, Spin } from "antd";
 import React, {
   ChangeEventHandler,
   PureComponent,
+  useCallback,
   useEffect,
+  useMemo,
+  useRef,
   useState,
   version,
 } from "react";
@@ -14,14 +17,28 @@ import {
 } from "src/services/syncManagerService";
 import { Logo } from "../../Components/Logo";
 import { SearchList, SearchListItem } from "./Components/SearchList";
-const { Search } = Input;
-let timer: any = undefined;
-
 export default function Page1() {
-  const [historyList, setHistoryList] = useState([] as Array<IHistoryInfo>);
-  const [loading, setLoading] = useState(false);
-  let [value, setValue] = useState("");
   const [isInit, setIsInit] = useState(true);
+  const resizeObserver = useMemo(
+    () =>
+      new ResizeObserver((entires) => {
+        if (entires[0]?.contentRect) {
+          sendCommandMsg({
+            type: "ResizeWindow",
+            height: entires[0].contentRect.height,
+          });
+        }
+      }),
+    []
+  );
+  const onRefChanged = useCallback((node: HTMLElement) => {
+    console.log(node);
+    if (node != null) {
+      resizeObserver.observe(node);
+    }
+  }, []);
+  useRef(null);
+  console.log();
   useEffect(() => {
     if (window != window.top) {
       listenToParentMsg("SetConfig", (msg) => {
@@ -31,13 +48,13 @@ export default function Page1() {
       sendCommandMsg({ type: "GetConfig" });
     } else {
       window.syncManagerConfig = {
-        dataServerUrl: "http://localhost:5266",
+        dataServerUrl: "http://10.0.0.78:28080",
       };
       setIsInit(false);
     }
   }, []);
   return (
-    <section>
+    <section ref={onRefChanged}>
       <div className="bar">
         <Logo />
       </div>

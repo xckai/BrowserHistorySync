@@ -1,8 +1,10 @@
 
 export interface Msg {
-    type: "GetConfig" | "SetHeight" | "SetWidth" | "SetConfig" | "OpenNewTab"
+    type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab"
     syncManagerConfig?: SyncManagerConfig
-    url?: string
+    url?: string,
+    height?: number,
+    width?: number,
 }
 export function sendCommandMsg(msg: Msg) {
     if (window != window.parent) {

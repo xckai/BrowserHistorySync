@@ -3,9 +3,11 @@ interface SyncManagerConfig {
     fontendUrl?: string,
 }
 interface Msg {
-    type: "GetConfig" | "SetHeight" | "SetWidth" | "SetConfig" | "OpenNewTab";
-    syncManagerConfig?: SyncManagerConfig;
-    url?: string;
+    type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab"
+    syncManagerConfig?: SyncManagerConfig
+    url?: string,
+    height?: number,
+    width?: number,
 }
 async function init() {
     const { fontendServerUrl, dataServerUrl } = await browser.storage.local.get([
@@ -19,7 +21,7 @@ async function init() {
     }
     console.log(fontendServerUrl, dataServerUrl)
     const iframe = <HTMLIFrameElement>document
-        .getElementById("mainFrame");
+        .getElementById("main-frame");
     window.addEventListener(
         "message",
         function (e) {
@@ -37,6 +39,12 @@ async function init() {
                     }
                     case "OpenNewTab": {
                         browser.tabs.create({ url: msg.url })
+                        break;
+                    }
+                    case "ResizeWindow": {
+                        let height = msg.height - 36;
+                        iframe.style.height = msg.height + "px";
+                        document.getElementById("main-body").style.height = msg.height + "px";
                         break;
                     }
                     default:

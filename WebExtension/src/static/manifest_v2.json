@@ -1,0 +1,47 @@
+{
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "default_locale": "zh_CN",
+  "background": {
+    "scripts": [
+      "common.js",
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": false,
+      "run_at": "document_start",
+      "js": [
+        "common.js",
+        "content.js"
+      ]
+    }
+  ],
+  "content_security_policy": "script-src 'self'; object-src 'self'; img-src 'self'",
+  "options_ui": {
+    "page": "option.html",
+    "open_in_tab": true
+  },
+  "browser_action": {
+    "default_title": "My Bookmarks",
+    "default_icon": "128.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "128.png",
+    "48": "128.png",
+    "128": "128.png"
+  },
+  "manifest_version": 2,
+  "permissions": [
+    "tabs",
+    "bookmarks",
+    "storage",
+    "webNavigation"
+  ],
+  "version": "0.0.1"
+}

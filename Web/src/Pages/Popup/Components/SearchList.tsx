@@ -181,7 +181,7 @@ export function SearchList() {
       <div
         id="scrollableDiv"
         style={{
-          height: "500px",
+          maxHeight: "450px",
           overflow: "auto",
           padding: "0 4px",
           borderTop: "1px solid rgba(140, 140, 140, 0.35)",
@@ -203,7 +203,7 @@ export function SearchList() {
               <Spin />
             </div>
           }
-          endMessage={!loading && <Divider plain>已经到底啦 🤐</Divider>}
+          endMessage={<Divider plain>已经到底啦 🤐</Divider>}
           scrollableTarget="scrollableDiv"
         >
           <List
