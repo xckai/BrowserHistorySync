@@ -331,6 +331,7 @@ export function SearchListGroup() {
             dataSource={List2Groups(historyList)}
             renderItem={(group: IHistoryInfoGroup) => (
               <SearchListGroupItem
+                key={group.groupTitle}
                 items={group.items}
                 groupTitle={group.groupTitle}
                 onClick={onClickItem}

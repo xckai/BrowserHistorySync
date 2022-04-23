@@ -27,6 +27,7 @@ export default function Page1() {
           sendCommandMsg({
             type: "ResizeWindow",
             height: entires[0].contentRect.height,
+            width: entires[0].contentRect.width,
           });
         }
       }),

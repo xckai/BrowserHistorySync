@@ -42,9 +42,10 @@ async function init() {
                         break;
                     }
                     case "ResizeWindow": {
-                        let height = msg.height - 36;
                         iframe.style.height = msg.height + "px";
+                        iframe.style.width = msg.width + "px";
                         document.getElementById("main-body").style.height = msg.height + "px";
+                        document.getElementById("main-body").style.width = msg.width + "px";
                         break;
                     }
                     default:
