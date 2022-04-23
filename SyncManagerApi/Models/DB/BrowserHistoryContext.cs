@@ -13,7 +13,9 @@ public class BrowserHistoryContext : DbContext
     {
     }
 
-    public virtual DbSet<UrlHistory> UrlHistories { get; set; } = null!;
+    public virtual DbSet<BrowserHistory> UrlHistories { get; set; } = null!;
+    public virtual DbSet<ExcludeRule> ExcludeRules { get; set; } = null!;
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -21,19 +23,16 @@ public class BrowserHistoryContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<UrlHistory>(entity =>
+        modelBuilder.Entity<BrowserHistory>(entity =>
         {
-            entity.ToTable("url_history");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-
-            entity.Property(e => e.HistoryDetail)
-                .HasColumnType("jsonb")
-                .HasColumnName("history_detail");
-
-            entity.Property(e => e.Timestamp).HasColumnName("timestamp");
+            entity.ToTable("browser_history");
+            
         });
-
+        modelBuilder.Entity<ExcludeRule>(entity =>
+        {
+            entity.ToTable("exclude_rule");
+            entity.Property(e => e.RuleType).HasConversion<string>();
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

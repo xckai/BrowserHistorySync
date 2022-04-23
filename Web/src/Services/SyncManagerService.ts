@@ -17,18 +17,26 @@ export interface IHistoryInfo {
   browserType: string,
   timestamp: string
 }
+export interface SearchParams {
+  dateFrom?: moment.Moment;
+  dateTo?: moment.Moment;
+  equipmentName?: string;
+}
 class SyncManagerService {
-  async queryHistoryList(keyword?: string) {
+  async queryHistoryList(keyword?: string, searchParam?: SearchParams) {
     console.log(window.syncManagerConfig)
     if (!window.syncManagerConfig || !window.syncManagerConfig.dataServerUrl) {
       throw new Error("No remote server API config");
     }
     return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl
-      }/api/UrlHistory/QueryUrlHistory`, {
+      }/api/UrlHistory/Query`, {
       params: {
         pageIndex: 1,
-        pageSize: 10,
-        keyword: keyword
+        pageSize: 15,
+        keyword: keyword,
+        dateFrom: searchParam?.dateFrom?.toISOString(),
+        dateTo: searchParam?.dateTo?.toISOString(),
+        equipments: searchParam?.equipmentName
       }
     });
   }

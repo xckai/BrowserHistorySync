@@ -17,6 +17,7 @@ import {
 } from "src/services/syncManagerService";
 import { Logo } from "../../Components/Logo";
 import { SearchList, SearchListItem } from "./Components/SearchList";
+import { SearchListGroup } from "./Components/SearchListGroup";
 export default function Page1() {
   const [isInit, setIsInit] = useState(true);
   const resizeObserver = useMemo(
@@ -48,17 +49,22 @@ export default function Page1() {
       sendCommandMsg({ type: "GetConfig" });
     } else {
       window.syncManagerConfig = {
-        dataServerUrl: "http://10.0.0.78:28080",
+        dataServerUrl: "http://localhost:5266",
       };
       setIsInit(false);
     }
   }, []);
   return (
-    <section ref={onRefChanged}>
+    <section
+      ref={onRefChanged}
+      className={css`
+        width: 30rem;
+      `}
+    >
       <div className="bar">
         <Logo />
       </div>
-      {isInit ? <Spin tip="正在初始化" /> : <SearchList />}
+      {isInit ? <Spin tip="正在初始化" /> : <SearchListGroup />}
     </section>
   );
 }

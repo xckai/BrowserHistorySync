@@ -14,39 +14,48 @@ import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
   IHistoryInfo,
+  SearchParams,
   syncManagerService,
 } from "src/services/syncManagerService";
 import moment from "moment";
 import { hashIntoColor, sendCommandMsg } from "src/commonLibary/utils";
-interface SearchParams {
-  dateFrom: string;
-  dateTo: string;
-  equipmentName: string;
+import _ from "lodash";
+
+interface IHistoryInfoGroup {
+  groupTitle: string;
+  items: Array<IHistoryInfo>;
 }
-export function SearchListItem(props: {
+function SearchListItem(props: {
   data: IHistoryInfo;
   onClick(data: IHistoryInfo): void;
+  onClickEquipmentTag(data: IHistoryInfo): void;
 }) {
   return (
     <List.Item
       onClick={() => {
         props.onClick(props.data);
       }}
+      title={
+        moment(props.data.timestamp).format("YYYY-MM-DD HH:mm ") +
+        props.data.url
+      }
     >
       <div
         className={css`
           display: flex;
           justify-content: space-between;
           width: 100%;
+          align-items: center;
         `}
       >
         <Avatar
           className={css`
-            min-width: 1.5rem;
-            min-height: 1.5rem !important;
-            width: 1.5rem !important;
-            height: 1.5rem !important;
-            margin-right: 0.2rem !important; ;
+            min-width: 1rem;
+            min-height: 1rem !important;
+            width: 1rem !important;
+            height: 1rem !important;
+            margin-right: 0.5rem !important;
+            border-radius: ${props.data.faviconUrl ? 0 : "50%"};
           `}
           src={props.data.faviconUrl}
         />
@@ -58,34 +67,18 @@ export function SearchListItem(props: {
               alignItems: "baseline",
             }}
           >
-            <span style={{ flex: 1, fontWeight: "bolder" }}>
-              {props.data.title}
-            </span>
-            <span style={{ fontSize: "80%", color: "gray" }}>
-              {moment(props.data.timestamp).format("YYYY-MM-DD HH:mm")}
-            </span>
-          </div>
-
-          <div
-            style={{ display: "flex", width: "100%", alignItems: "flex-end" }}
-          >
-            <div
-              style={{
-                fontSize: "80%",
-                color: "gray",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                flex: 1,
-
-                paddingRight: 16,
-              }}
-            >
-              {props.data.url}
-            </div>
+            <span style={{ flex: 1, fontSize: "90%" }}>{props.data.title}</span>
             <Tag
+              className={css`
+                cursor: pointer;
+              `}
               style={{ borderRadius: 3 }}
               color={hashIntoColor(props.data.equipmentName)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                props.onClickEquipmentTag(props.data);
+              }}
             >
               {props.data.equipmentName}
             </Tag>
@@ -95,20 +88,103 @@ export function SearchListItem(props: {
     </List.Item>
   );
 }
+
+function SearchListGroupItem(
+  props: IHistoryInfoGroup & {
+    onClick(data: IHistoryInfo): void;
+    onClickEquipmentTag(data: IHistoryInfo): void;
+  }
+) {
+  return (
+    <>
+      <Divider
+        className={css`
+          margin: 0 !important;
+        `}
+        plain
+        key={props.groupTitle}
+      >
+        {props.groupTitle}
+      </Divider>
+      {props.items.map((item) => (
+        <SearchListItem
+          data={item}
+          onClick={props.onClick}
+          onClickEquipmentTag={props.onClickEquipmentTag}
+        />
+      ))}
+    </>
+  );
+}
+function SearchParamBar(props: {
+  data: SearchParams;
+  onChange: (param: SearchParams) => void;
+}) {
+  return props.data.equipmentName || props.data.dateTo ? (
+    <div
+      className={css`
+        margin: 0px 1rem 5px 1rem;
+      `}
+    >
+      <span style={{ marginRight: ".5rem" }}>Filter:</span>
+      {props.data.equipmentName && (
+        <Tag
+          closable
+          onClose={() => {
+            props.onChange({
+              ...props.data,
+              equipmentName: undefined,
+            });
+          }}
+        >
+          {props.data.equipmentName}
+        </Tag>
+      )}
+      {props.data.dateFrom && (
+        <Tag
+          closable
+          onClose={() => {
+            props.onChange({
+              ...props.data,
+              dateFrom: undefined,
+              dateTo: undefined,
+            });
+          }}
+        >
+          {props.data.dateFrom.format("YY/MM/DD") +
+            "-" +
+            props.data.dateTo.format("YY/MM/DD")}
+        </Tag>
+      )}
+    </div>
+  ) : null;
+}
 let timer: any = 0;
-export function SearchList() {
+export function SearchListGroup() {
   const [historyList, setHistoryList] = useState([] as Array<IHistoryInfo>);
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useState({} as SearchParams);
-  let [value, setValue] = useState("");
+  let [searchValue, setSearchValue] = useState("");
   let [pagination, setPagination] = useState({ total: 0, current: 0 });
+  function List2Groups(list: Array<IHistoryInfo>) {
+    return _(list)
+      .groupBy((item) => moment(item.timestamp).format("YYYY-MM-DD A"))
+      .map(
+        (g) =>
+          ({
+            groupTitle: moment(g[0].timestamp).format("YYYY-MM-DD A"),
+            items: g,
+          } as IHistoryInfoGroup)
+      )
+      .value();
+  }
   function loadMoreData() {
     if (loading) {
       return;
     }
     setLoading(true);
     syncManagerService
-      .queryHistoryList(value)
+      .queryHistoryList(searchValue)
       .then((res) => {
         setPagination({ total: res.data.total, current: res.data.current });
         setHistoryList([...historyList, ...res.data?.data]);
@@ -121,6 +197,7 @@ export function SearchList() {
   }
   function handleSearch(val: string) {
     setLoading(true);
+    setHistoryList([]);
     if (timer) {
       clearTimeout(timer);
       timer = 0;
@@ -151,7 +228,6 @@ export function SearchList() {
             total: res.data.total,
             current: res.data.current,
           });
-
           setHistoryList(res.data?.data);
           setLoading(false);
         })
@@ -163,6 +239,9 @@ export function SearchList() {
     setLoading(true);
     getLatestHistoryList();
   }, []);
+  function onClickEquipmentTag(data: IHistoryInfo) {
+    setSearchParams({ equipmentName: data.equipmentName });
+  }
   function onClickItem(data: IHistoryInfo) {
     sendCommandMsg({
       type: "OpenNewTab",
@@ -173,7 +252,7 @@ export function SearchList() {
     <>
       <div
         className={css`
-          margin: 1rem 1rem;
+          margin: 1rem 1rem 0.5rem 1rem;
           display: flex;
           align-items: center;
           justify-content: space-around;
@@ -187,26 +266,29 @@ export function SearchList() {
           size="large"
           placeholder="搜索历史访问记录"
           allowClear
-          value={value}
+          value={searchValue}
           prefix={<SearchOutlined />}
           onChange={(e) => {
             let val = e.target.value;
-            setValue(val);
+            setSearchValue(val);
             handleSearch(val);
           }}
         />
-        <Button
+        {/* <Button
           className={css`
             margin: 0 0.5rem;
           `}
           shape="circle"
           icon={<SettingOutlined />}
-        />
+        /> */}
       </div>
+      <SearchParamBar data={searchParams} onChange={setSearchParams} />
       <div
         id="scrollableDiv"
         style={{
+          marginTop: ".5rem",
           maxHeight: "450px",
+          minHeight: "300px",
           overflow: "auto",
           padding: "0 4px",
           borderTop: "1px solid rgba(140, 140, 140, 0.35)",
@@ -218,17 +300,19 @@ export function SearchList() {
           next={loadMoreData}
           hasMore={historyList.length < pagination.total}
           loader={
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-            >
-              <Spin />
-            </div>
+            !loading && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignContent: "center",
+                }}
+              >
+                <Spin />
+              </div>
+            )
           }
-          endMessage={<Divider plain>已经到底啦 🤐</Divider>}
+          endMessage={!loading && <Divider plain>已经到底啦 🤐</Divider>}
           scrollableTarget="scrollableDiv"
         >
           <List
@@ -244,9 +328,14 @@ export function SearchList() {
                 }
               }
             `}
-            dataSource={historyList}
-            renderItem={(item: IHistoryInfo) => (
-              <SearchListItem data={item} onClick={onClickItem} />
+            dataSource={List2Groups(historyList)}
+            renderItem={(group: IHistoryInfoGroup) => (
+              <SearchListGroupItem
+                items={group.items}
+                groupTitle={group.groupTitle}
+                onClick={onClickItem}
+                onClickEquipmentTag={onClickEquipmentTag}
+              />
             )}
           />
         </InfiniteScroll>

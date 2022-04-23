@@ -22,9 +22,21 @@ namespace SyncManagerApi.Controllers
            return NoContent();
         }
         [HttpGet("QueryUrlHistory")]
-        public async Task<Pagination<HistoryDetail>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
+        public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
         {
             return await _dbSyncService.Query(keyword ?? "", pageSize, pageIndex);
+        }
+        [HttpGet("Query")]
+        public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword,string? equipments, DateTimeOffset? dateFrom, DateTimeOffset? DateTo, int pageSize =10, int pageIndex =1)
+        {
+            
+            return await _dbSyncService.Query(new QueryParams()
+            {
+                Keyword = keyword,
+                DateFrom = dateFrom,
+                DateTo = DateTo,
+                Equipments = string.IsNullOrWhiteSpace(equipments)? null : equipments.Split(';').Select(value=>value.Trim()).ToList()
+            },pageSize,pageIndex);
         }
     }
 }
