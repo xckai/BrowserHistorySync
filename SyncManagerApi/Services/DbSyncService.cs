@@ -56,17 +56,18 @@ public class DbSyncService : ISyncService
 
     public async Task<Pagination<BrowserHistory>> Query(QueryParams queryParams, int pageSize, int pageIndex)
     {
-        var query = _db.UrlHistories;
+        IQueryable<BrowserHistory> query = _db.UrlHistories;
+        
         if (queryParams.DateFrom != null)
         {
             queryParams.DateTo = queryParams.DateTo ?? DateTime.Now;
-            query.Where(history =>
-               history.Timestamp >= queryParams.DateFrom &&
+            query = query.Where(history =>
+                history.Timestamp >= queryParams.DateFrom &&
                 history.Timestamp <= queryParams.DateTo);
         }
         if (!string.IsNullOrWhiteSpace(queryParams.Keyword))
         {
-            query.Where(history =>
+            query=query.Where(history =>
                                    (history.Title.Contains(queryParams.Keyword)
                                     || history.Url.Contains(queryParams.Keyword)));
             
@@ -74,7 +75,7 @@ public class DbSyncService : ISyncService
 
         if (queryParams.Equipments != null && queryParams.Equipments.Count >0)
         {
-            query.Where(history =>
+            query=query.Where(history =>
               queryParams.Equipments.Contains(history.EquipmentName));
         }
 
