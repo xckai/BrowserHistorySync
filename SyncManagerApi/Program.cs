@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using SyncManagerApi.Models.DB;
 using SyncManagerApi.Services;
+using SyncMangerApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +24,14 @@ builder.Services.AddDbContext<BrowserHistoryContext>(dbBuilder=>dbBuilder.UseNpg
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes =
+        ResponseCompressionDefaults.MimeTypes;
+});
 builder.WebHost.UseKestrel();
 var app = builder.Build();
 
@@ -37,15 +48,21 @@ app.UseCors("default");
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseStaticFiles();
+app.UseResponseCompression();
+app.UseSpaStatic(Path.Join("./wwwroot","index.html"));
+//
+// app.UseStaticFiles(new StaticFileOptions
+// {
+//     OnPrepareResponse = ctx =>
+//     {
+//         Console.WriteLine(ctx.Context.Response.Headers[HeaderNames.ContentType]);
+//         // if()
+//         // const int durationInSeconds = 60 * 60 * 24;
+//         // ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+//         //     "public,max-age=" + durationInSeconds;
+//     }
+// });
 
 
-app.MapWhen(ctx => !ctx.Request.Path.StartsWithSegments("/api"), builder =>
-{
-    builder.Run(async (context) =>
-    {
-        context.Response.ContentType = "text/html";
-        await context.Response.SendFileAsync(Path.Combine("./wwwroot", "index.html"));
-    });
-});
-app.Run();
+
+app.Run(); 
