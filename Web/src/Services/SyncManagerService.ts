@@ -23,7 +23,7 @@ export interface SearchParams {
   equipmentName?: string;
 }
 class SyncManagerService {
-  async queryHistoryList(keyword?: string, searchParam?: SearchParams) {
+  async queryHistoryList(keyword?: string, searchParam?: SearchParams, pageIndex = 1, pageSize = 15) {
     console.log(window.syncManagerConfig)
     if (!window.syncManagerConfig || !window.syncManagerConfig.dataServerUrl) {
       throw new Error("No remote server API config");
@@ -31,8 +31,8 @@ class SyncManagerService {
     return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl
       }/api/UrlHistory/Query`, {
       params: {
-        pageIndex: 1,
-        pageSize: 15,
+        pageIndex: pageIndex,
+        pageSize: pageSize,
         keyword: keyword,
         dateFrom: searchParam?.dateFrom?.toISOString(),
         dateTo: searchParam?.dateTo?.toISOString(),

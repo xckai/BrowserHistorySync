@@ -5,6 +5,7 @@ interface SyncManagerConfig {
     dataServerUrl?: string,
     fontendUrl?: string,
 }
+
 declare module '*.avif' {
     const src: string;
     export default src;

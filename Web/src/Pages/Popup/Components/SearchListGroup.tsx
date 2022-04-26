@@ -1,15 +1,5 @@
-import {
-  List,
-  Avatar,
-  Input,
-  Skeleton,
-  Divider,
-  Spin,
-  Tag,
-  Button,
-} from "antd";
+import { List, Avatar, Input, Divider, Spin, Tag } from "antd";
 import React, { useEffect, useState } from "react";
-import { css, cx } from "@emotion/css";
 import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -20,11 +10,22 @@ import {
 import moment from "moment";
 import { hashIntoColor, sendCommandMsg } from "src/commonLibary/utils";
 import _ from "lodash";
+import styled from "styled-components";
 
 interface IHistoryInfoGroup {
   groupTitle: string;
   items: Array<IHistoryInfo>;
 }
+const StyledList = styled(List)`
+  margin: 0.5rem 0rem;
+  .ant-list-item {
+    padding: 8px 8px !important;
+    &:hover {
+      background-color: #e6e5e5;
+      border-radius: 3px;
+    }
+  }
+`;
 function SearchListItem(props: {
   data: IHistoryInfo;
   onClick(data: IHistoryInfo): void;
@@ -35,13 +36,12 @@ function SearchListItem(props: {
       onClick={() => {
         props.onClick(props.data);
       }}
-      title={
-        moment(props.data.timestamp).format("YYYY-MM-DD HH:mm ") +
-        props.data.url
-      }
+      title={`${props.data.equipmentName} ${moment(props.data.timestamp).format(
+        "YYYY-MM-DD HH:mm "
+      )} \n ${props.data.url}`}
     >
       <div
-        className={css`
+        css={`
           display: flex;
           justify-content: space-between;
           width: 100%;
@@ -49,7 +49,7 @@ function SearchListItem(props: {
         `}
       >
         <Avatar
-          className={css`
+          css={`
             min-width: 1rem;
             min-height: 1rem !important;
             width: 1rem !important;
@@ -68,8 +68,8 @@ function SearchListItem(props: {
             }}
           >
             <span style={{ flex: 1, fontSize: "90%" }}>{props.data.title}</span>
-            <Tag
-              className={css`
+            {/* <Tag
+              css={`
                 cursor: pointer;
               `}
               style={{ borderRadius: 3 }}
@@ -81,7 +81,7 @@ function SearchListItem(props: {
               }}
             >
               {props.data.equipmentName}
-            </Tag>
+            </Tag> */}
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ function SearchListGroupItem(
   return (
     <>
       <Divider
-        className={css`
+        css={`
           margin: 0 !important;
         `}
         plain
@@ -122,7 +122,7 @@ function SearchParamBar(props: {
 }) {
   return props.data.equipmentName || props.data.dateTo ? (
     <div
-      className={css`
+      css={`
         margin: 0px 1rem 5px 1rem;
       `}
     >
@@ -165,7 +165,7 @@ export function SearchListGroup() {
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useState({} as SearchParams);
   let [searchValue, setSearchValue] = useState("");
-  let [pagination, setPagination] = useState({ total: 0, current: 0 });
+  let [pagination, setPagination] = useState({ total: 0, current: 1 });
   function List2Groups(list: Array<IHistoryInfo>) {
     return _(list)
       .groupBy((item) => moment(item.timestamp).format("YYYY-MM-DD A"))
@@ -184,7 +184,7 @@ export function SearchListGroup() {
     }
     setLoading(true);
     syncManagerService
-      .queryHistoryList(searchValue)
+      .queryHistoryList(searchValue, searchParams, pagination.current + 1, 15)
       .then((res) => {
         setPagination({ total: res.data.total, current: res.data.current });
         setHistoryList([...historyList, ...res.data?.data]);
@@ -204,7 +204,7 @@ export function SearchListGroup() {
     }
     timer = setTimeout(function () {
       syncManagerService
-        .queryHistoryList(val)
+        .queryHistoryList(val, searchParams, 1, 15)
         .then((res) => {
           setPagination({
             total: res.data.total,
@@ -251,7 +251,7 @@ export function SearchListGroup() {
   return (
     <>
       <div
-        className={css`
+        css={`
           margin: 1rem 1rem 0.5rem 1rem;
           display: flex;
           align-items: center;
@@ -315,19 +315,10 @@ export function SearchListGroup() {
           endMessage={!loading && <Divider plain>已经到底啦 🤐</Divider>}
           scrollableTarget="scrollableDiv"
         >
-          <List
+          <StyledList
             loading={loading}
             itemLayout="horizontal"
             size="small"
-            className={css`
-              margin: 0.5rem 0rem;
-              .ant-list-item {
-                padding: 8px 8px !important;
-                &:hover {
-                  background-color: gainsboro;
-                }
-              }
-            `}
             dataSource={List2Groups(historyList)}
             renderItem={(group: IHistoryInfoGroup) => (
               <SearchListGroupItem

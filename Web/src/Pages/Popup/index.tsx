@@ -1,4 +1,3 @@
-import { css } from "@emotion/css";
 import { Input, List, Spin } from "antd";
 import React, {
   ChangeEventHandler,
@@ -58,7 +57,7 @@ export default function Page1() {
   return (
     <section
       ref={onRefChanged}
-      className={css`
+      css={`
         width: 30rem;
       `}
     >
