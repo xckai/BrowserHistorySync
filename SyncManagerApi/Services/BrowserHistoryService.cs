@@ -5,13 +5,14 @@ using SyncManagerApi.Models.DB;
 
 namespace SyncManagerApi.Services;
 
-public class DbSyncService : ISyncService
+public class BrowserHistoryService : IBrowserHistoryService
 {
     private readonly BrowserHistoryContext _db;
-
-    public DbSyncService(BrowserHistoryContext db)
+    private readonly IHistoryFilterRuleService _ruleService;
+    public BrowserHistoryService(BrowserHistoryContext db,IHistoryFilterRuleService ruleService)
     {
         _db = db;
+        _ruleService = ruleService;
     }
 
 
@@ -19,17 +20,22 @@ public class DbSyncService : ISyncService
     {
         if (histories != null)
         {
-            await _db.UrlHistories.AddRangeAsync(histories.Select(history => new BrowserHistory()
+            var rules = await _db.ExcludeRules.ToListAsync();
+            histories = histories.Where( (dto) => !_ruleService.IsMatchExcludeRule(dto.Url).GetAwaiter().GetResult()).ToList();
+            if (histories != null && histories.Count > 0)
             {
-                Url = history.Url,
-                Title = history.Title,
-                FaviconUrl = history.FaviconUrl,
-                EquipmentName = equipmentInfo?.EquipmentName,
-                Timestamp = DateTime.UtcNow,
-                BrowserType = equipmentInfo?.BrowserType
+                await _db.UrlHistories.AddRangeAsync(histories.Select(history => new BrowserHistory()
+                {
+                    Url = history.Url,
+                    Title = history.Title,
+                    FaviconUrl = history.FaviconUrl,
+                    EquipmentName = equipmentInfo?.EquipmentName,
+                    Timestamp = DateTime.UtcNow,
+                    BrowserType = equipmentInfo?.BrowserType
                 
-            }));
-            await _db.SaveChangesAsync();
+                }));
+                await _db.SaveChangesAsync();
+            }
         }
     }
 

@@ -3,7 +3,7 @@ using SyncManagerApi.Models.DB;
 
 namespace SyncManagerApi.Interface;
 
-public interface ISyncService
+public interface IBrowserHistoryService
 {
     public Task BatchSync(List<HistoryDto>? histories, EquipmentInfo? equipmentInfo);
 

@@ -1,7 +1,7 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
+using SyncManagerApi.Interface;
 using SyncManagerApi.Models.DB;
 using SyncManagerApi.Services;
 using SyncMangerApi.Extensions;
@@ -16,9 +16,14 @@ builder.Services.AddCors(options =>
 
     });
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.IgnoreNullValues = true;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 Console.WriteLine(builder.Configuration.GetConnectionString("pgsql"));
-builder.Services.AddScoped<DbSyncService>();
+builder.Services.AddScoped<IBrowserHistoryService,BrowserHistoryService>();
+builder.Services.AddScoped<IHistoryFilterRuleService, HistoryFilterRuleService>();
 builder.Services.AddDbContext<BrowserHistoryContext>(dbBuilder=>dbBuilder.UseNpgsql(builder.Configuration.GetConnectionString("pgsql")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

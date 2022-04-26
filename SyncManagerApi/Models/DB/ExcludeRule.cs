@@ -1,5 +1,10 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace SyncManagerApi.Models.DB;
 
+
+[JsonConverter(typeof(StringEnumConverter))]
 public enum RuleTypeEnum
 {
     Domain,

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SyncManagerApi.Interface;
 using SyncManagerApi.Models;
 using SyncManagerApi.Models.DB;
 using SyncManagerApi.Services;
@@ -9,28 +10,28 @@ namespace SyncManagerApi.Controllers
     [ApiController]
     public class UrlHistoryController : ControllerBase
     {
-        private readonly DbSyncService _dbSyncService;
+        private readonly IBrowserHistoryService _browserHistoryService;
 
-        public UrlHistoryController(DbSyncService dbSyncService)
+        public UrlHistoryController(IBrowserHistoryService browserHistoryService)
         {
-            _dbSyncService = dbSyncService;
+            _browserHistoryService = browserHistoryService;
         }
         [HttpPost("BatchSyncUrlHistory")]
         public async Task<ActionResult> BatchSyncUrlHistory(BatchSyncRequestDto batchSyncRequestDto)
         {
-            await _dbSyncService.BatchSync(batchSyncRequestDto.HistoryList, batchSyncRequestDto.EquipmentInfo);
+            await _browserHistoryService.BatchSync(batchSyncRequestDto.HistoryList, batchSyncRequestDto.EquipmentInfo);
            return NoContent();
         }
         [HttpGet("QueryUrlHistory")]
         public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
         {
-            return await _dbSyncService.Query(keyword ?? "", pageSize, pageIndex);
+            return await _browserHistoryService.Query(keyword ?? "", pageSize, pageIndex);
         }
         [HttpGet("Query")]
         public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword,string? equipments, DateTimeOffset? dateFrom, DateTimeOffset? DateTo, int pageSize =10, int pageIndex =1)
         {
             
-            return await _dbSyncService.Query(new QueryParams()
+            return await _browserHistoryService.Query(new QueryParams()
             {
                 Keyword = keyword,
                 DateFrom = dateFrom,
