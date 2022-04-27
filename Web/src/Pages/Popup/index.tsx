@@ -9,7 +9,11 @@ import React, {
   useState,
   version,
 } from "react";
-import { listenToParentMsg, sendCommandMsg } from "src/commonLibary/utils";
+import {
+  isInExtension,
+  listenToParentMsg,
+  sendCommandMsg,
+} from "src/commonLibary/utils";
 import {
   IHistoryInfo,
   syncManagerService,
@@ -39,9 +43,8 @@ export default function Page1() {
     }
   }, []);
   useRef(null);
-  console.log();
   useEffect(() => {
-    if (window != window.top) {
+    if (isInExtension()) {
       listenToParentMsg("SetConfig", (msg) => {
         window.syncManagerConfig = msg.syncManagerConfig;
         setIsInit(false);
@@ -49,7 +52,7 @@ export default function Page1() {
       sendCommandMsg({ type: "GetConfig" });
     } else {
       window.syncManagerConfig = {
-        dataServerUrl: "http://localhost:5266",
+        dataServerUrl: "",
       };
       setIsInit(false);
     }

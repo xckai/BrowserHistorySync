@@ -3,7 +3,7 @@ interface SyncManagerConfig {
     fontendUrl?: string,
 }
 interface Msg {
-    type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab"
+    type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab" | "CloseWindow"
     syncManagerConfig?: SyncManagerConfig
     url?: string,
     height?: number,
@@ -39,6 +39,10 @@ async function init() {
                     }
                     case "OpenNewTab": {
                         browser.tabs.create({ url: msg.url })
+                        break;
+                    }
+                    case "CloseWindow": {
+                        window.close();
                         break;
                     }
                     case "ResizeWindow": {

@@ -1,6 +1,6 @@
-import { List, Avatar, Input, Divider, Spin, Tag } from "antd";
+import { List, Avatar, Input, Divider, Spin, Tag, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
+import { SearchOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
   IHistoryInfo,
@@ -8,7 +8,11 @@ import {
   syncManagerService,
 } from "src/services/syncManagerService";
 import moment from "moment";
-import { hashIntoColor, sendCommandMsg } from "src/commonLibary/utils";
+import {
+  hashIntoColor,
+  isInExtension,
+  sendCommandMsg,
+} from "src/commonLibary/utils";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -18,11 +22,36 @@ interface IHistoryInfoGroup {
 }
 const StyledList = styled(List)`
   margin: 0.5rem 0rem;
-  .ant-list-item {
-    padding: 8px 8px !important;
-    &:hover {
-      background-color: #e6e5e5;
-      border-radius: 3px;
+`;
+const StyledListItem = styled(List.Item)`
+  padding: 8px 8px !important;
+  .close_btn {
+    visibility: hidden;
+    opacity: 0.3;
+  }
+  &:hover {
+    background-color: #e6e5e5;
+    border-radius: 3px;
+    .close_btn {
+      visibility: visible;
+      &:hover {
+        color: #40a9ff;
+        opacity: 0.9;
+        cursor: pointer;
+      }
+    }
+  }
+  .item_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    .ant-avatar {
+      min-width: 1rem;
+      min-height: 1rem !important;
+      width: 1rem !important;
+      height: 1rem !important;
+      margin-right: 0.5rem !important;
     }
   }
 `;
@@ -30,9 +59,10 @@ function SearchListItem(props: {
   data: IHistoryInfo;
   onClick(data: IHistoryInfo): void;
   onClickEquipmentTag(data: IHistoryInfo): void;
+  onDeleteBtnClick(data: IHistoryInfo): void;
 }) {
   return (
-    <List.Item
+    <StyledListItem
       onClick={() => {
         props.onClick(props.data);
       }}
@@ -40,21 +70,9 @@ function SearchListItem(props: {
         "YYYY-MM-DD HH:mm "
       )} \n ${props.data.url}`}
     >
-      <div
-        css={`
-          display: flex;
-          justify-content: space-between;
-          width: 100%;
-          align-items: center;
-        `}
-      >
+      <div className="item_container">
         <Avatar
           css={`
-            min-width: 1rem;
-            min-height: 1rem !important;
-            width: 1rem !important;
-            height: 1rem !important;
-            margin-right: 0.5rem !important;
             border-radius: ${props.data.faviconUrl ? 0 : "50%"};
           `}
           src={props.data.faviconUrl}
@@ -68,6 +86,7 @@ function SearchListItem(props: {
             }}
           >
             <span style={{ flex: 1, fontSize: "90%" }}>{props.data.title}</span>
+
             {/* <Tag
               css={`
                 cursor: pointer;
@@ -84,8 +103,16 @@ function SearchListItem(props: {
             </Tag> */}
           </div>
         </div>
+        <CloseCircleOutlined
+          className="close_btn"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            props.onDeleteBtnClick(props.data);
+          }}
+        />
       </div>
-    </List.Item>
+    </StyledListItem>
   );
 }
 
@@ -93,6 +120,7 @@ function SearchListGroupItem(
   props: IHistoryInfoGroup & {
     onClick(data: IHistoryInfo): void;
     onClickEquipmentTag(data: IHistoryInfo): void;
+    onDeleteItem(data: IHistoryInfo): void;
   }
 ) {
   return (
@@ -106,11 +134,13 @@ function SearchListGroupItem(
       >
         {props.groupTitle}
       </Divider>
-      {props.items.map((item) => (
+      {props.items.map((item, idx) => (
         <SearchListItem
           data={item}
+          key={item.url + " " + idx}
           onClick={props.onClick}
           onClickEquipmentTag={props.onClickEquipmentTag}
+          onDeleteBtnClick={props.onDeleteItem}
         />
       ))}
     </>
@@ -166,6 +196,27 @@ export function SearchListGroup() {
   const [searchParams, setSearchParams] = useState({} as SearchParams);
   let [searchValue, setSearchValue] = useState("");
   let [pagination, setPagination] = useState({ total: 0, current: 1 });
+  useEffect(() => {
+    async function getLatestHistoryList() {
+      syncManagerService
+        .queryHistoryList()
+        .then((res) => {
+          setPagination({
+            total: res.data.total,
+            current: res.data.current,
+          });
+          setHistoryList(res.data?.data);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.error(e);
+          message.error(e.message);
+          setLoading(false);
+        });
+    }
+    setLoading(true);
+    getLatestHistoryList();
+  }, []);
   function List2Groups(list: Array<IHistoryInfo>) {
     return _(list)
       .groupBy((item) => moment(item.timestamp).format("YYYY-MM-DD A"))
@@ -192,6 +243,7 @@ export function SearchListGroup() {
       })
       .catch((e) => {
         console.error(e);
+        message.error(e.message);
         setLoading(false);
       });
   }
@@ -215,38 +267,41 @@ export function SearchListGroup() {
         })
         .catch((e) => {
           console.error(e);
+          message.error(e.message);
           setLoading(false);
         });
-    }, 1000);
+    }, 500);
   }
-  useEffect(() => {
-    async function getLatestHistoryList() {
-      syncManagerService
-        .queryHistoryList()
-        .then((res) => {
-          setPagination({
-            total: res.data.total,
-            current: res.data.current,
-          });
-          setHistoryList(res.data?.data);
-          setLoading(false);
-        })
-        .catch((e) => {
-          console.error(e);
-          setLoading(false);
-        });
-    }
-    setLoading(true);
-    getLatestHistoryList();
-  }, []);
+
   function onClickEquipmentTag(data: IHistoryInfo) {
     setSearchParams({ equipmentName: data.equipmentName });
   }
   function onClickItem(data: IHistoryInfo) {
-    sendCommandMsg({
-      type: "OpenNewTab",
-      url: data.url,
-    });
+    if (isInExtension) {
+      sendCommandMsg({
+        type: "OpenNewTab",
+        url: data.url,
+      });
+      sendCommandMsg({ type: "CloseWindow" });
+    } else {
+      window.open(data.url);
+    }
+  }
+  function handleDelete(data: IHistoryInfo) {
+    console.log(data);
+    if (data.id) {
+      syncManagerService
+        .deleteHistoryItem(data.id)
+        .then((res) => {
+          let newList = historyList.filter((item) => item.id !== data.id);
+          message.success("删除成功");
+          setHistoryList([...newList]);
+        })
+        .catch((e) => {
+          console.error(e);
+          message.error(e.message);
+        });
+    }
   }
   return (
     <>
@@ -327,6 +382,7 @@ export function SearchListGroup() {
                 groupTitle={group.groupTitle}
                 onClick={onClickItem}
                 onClickEquipmentTag={onClickEquipmentTag}
+                onDeleteItem={handleDelete}
               />
             )}
           />

@@ -1,6 +1,6 @@
 
 export interface Msg {
-    type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab"
+    type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab" | "CloseWindow"
     syncManagerConfig?: SyncManagerConfig
     url?: string,
     height?: number,
@@ -14,6 +14,9 @@ export function sendCommandMsg(msg: Msg) {
     } else {
         return;
     }
+}
+export function isInExtension() {
+    return window != window.top;
 }
 export function listenToParentMsg(type: Msg["type"], cb: (msg: Msg) => void) {
     window.addEventListener("message", (e) => {

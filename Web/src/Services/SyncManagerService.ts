@@ -10,6 +10,7 @@ export interface IPagination<T> {
   data: Array<T>
 }
 export interface IHistoryInfo {
+  id?: number
   url: string,
   title: string,
   faviconUrl: string,
@@ -24,10 +25,7 @@ export interface SearchParams {
 }
 class SyncManagerService {
   async queryHistoryList(keyword?: string, searchParam?: SearchParams, pageIndex = 1, pageSize = 15) {
-    console.log(window.syncManagerConfig)
-    if (!window.syncManagerConfig || !window.syncManagerConfig.dataServerUrl) {
-      throw new Error("No remote server API config");
-    }
+
     return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl
       }/api/UrlHistory/Query`, {
       params: {
@@ -39,6 +37,11 @@ class SyncManagerService {
         equipments: searchParam?.equipmentName
       }
     });
+  }
+  async deleteHistoryItem(id: number) {
+
+    return axios.delete(`${window.syncManagerConfig?.dataServerUrl
+      }/api/UrlHistory?id=${id}`);
   }
 }
 

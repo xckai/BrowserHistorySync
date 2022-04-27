@@ -17,10 +17,17 @@ namespace SyncManagerApi.Controllers
             _browserHistoryService = browserHistoryService;
         }
         [HttpPost("BatchSyncUrlHistory")]
+        [HttpPost("BatchSync")]
         public async Task<ActionResult> BatchSyncUrlHistory(BatchSyncRequestDto batchSyncRequestDto)
-        {
+        { 
             await _browserHistoryService.BatchSync(batchSyncRequestDto.HistoryList, batchSyncRequestDto.EquipmentInfo);
-           return NoContent();
+            return NoContent();
+        }
+        [HttpDelete]
+        public async Task<ActionResult> DeleteHistory(int id)
+        {
+            await _browserHistoryService.Delete(id);
+            return NoContent();
         }
         [HttpGet("QueryUrlHistory")]
         public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
