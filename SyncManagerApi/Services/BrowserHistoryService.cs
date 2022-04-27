@@ -21,8 +21,7 @@ public class BrowserHistoryService : IBrowserHistoryService
     {
         if (historieDtos != null)
         {
-            var rules = await _db.ExcludeRules.ToListAsync();
-            historieDtos = historieDtos
+            var rules = await _db.ExcludeRules.ToListAsync(); historieDtos = historieDtos
                 .Where((dto) => !_ruleService.IsMatchExcludeRule(dto.Url).GetAwaiter().GetResult()).ToList();
             if (historieDtos.Count > 0)
             {

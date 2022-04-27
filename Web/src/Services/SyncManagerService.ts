@@ -26,7 +26,7 @@ export interface SearchParams {
 class SyncManagerService {
   async queryHistoryList(keyword?: string, searchParam?: SearchParams, pageIndex = 1, pageSize = 15) {
 
-    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl
+    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl ?? ""
       }/api/UrlHistory/Query`, {
       params: {
         pageIndex: pageIndex,
@@ -40,7 +40,7 @@ class SyncManagerService {
   }
   async deleteHistoryItem(id: number) {
 
-    return axios.delete(`${window.syncManagerConfig?.dataServerUrl
+    return axios.delete(`${window.syncManagerConfig?.dataServerUrl ?? ""
       }/api/UrlHistory?id=${id}`);
   }
 }

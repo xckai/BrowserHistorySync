@@ -20,7 +20,7 @@ import {
 } from "src/services/syncManagerService";
 import { Logo } from "../../Components/Logo";
 import { SearchList, SearchListItem } from "./Components/SearchList";
-import { SearchListGroup } from "./Components/SearchListGroup";
+import { SearchListGroup } from "../../Components/SearchListGroup";
 export default function Page1() {
   const [isInit, setIsInit] = useState(true);
   const resizeObserver = useMemo(
@@ -57,6 +57,12 @@ export default function Page1() {
       setIsInit(false);
     }
   }, []);
+  function onClickItem(data: IHistoryInfo) {
+    sendCommandMsg({
+      type: "OpenNewTab",
+      url: data.url,
+    });
+  }
   return (
     <section
       ref={onRefChanged}
@@ -67,7 +73,17 @@ export default function Page1() {
       <div className="bar">
         <Logo />
       </div>
-      {isInit ? <Spin tip="正在初始化" /> : <SearchListGroup />}
+      {isInit ? (
+        <Spin tip="正在初始化" />
+      ) : (
+        <SearchListGroup
+          css={`
+            max-height: 500px;
+          `}
+          onClickItem={onClickItem}
+          pageSize={15}
+        />
+      )}
     </section>
   );
 }

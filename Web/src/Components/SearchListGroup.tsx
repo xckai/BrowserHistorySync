@@ -8,11 +8,6 @@ import {
   syncManagerService,
 } from "src/services/syncManagerService";
 import moment from "moment";
-import {
-  hashIntoColor,
-  isInExtension,
-  sendCommandMsg,
-} from "src/commonLibary/utils";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -24,7 +19,7 @@ const StyledList = styled(List)`
   margin: 0.5rem 0rem;
 `;
 const StyledListItem = styled(List.Item)`
-  padding: 8px 8px !important;
+  padding: 8px 8px 8px 16px !important;
   .close_btn {
     visibility: hidden;
     opacity: 0.3;
@@ -190,7 +185,11 @@ function SearchParamBar(props: {
   ) : null;
 }
 let timer: any = 0;
-export function SearchListGroup() {
+export function SearchListGroup(props: {
+  onClickItem: (item: IHistoryInfo) => void;
+  pageSize: number;
+  className?: string;
+}) {
   const [historyList, setHistoryList] = useState([] as Array<IHistoryInfo>);
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useState({} as SearchParams);
@@ -199,7 +198,7 @@ export function SearchListGroup() {
   useEffect(() => {
     async function getLatestHistoryList() {
       syncManagerService
-        .queryHistoryList()
+        .queryHistoryList("", {}, pagination.current, props.pageSize)
         .then((res) => {
           setPagination({
             total: res.data.total,
@@ -235,7 +234,12 @@ export function SearchListGroup() {
     }
     setLoading(true);
     syncManagerService
-      .queryHistoryList(searchValue, searchParams, pagination.current + 1, 15)
+      .queryHistoryList(
+        searchValue,
+        searchParams,
+        pagination.current + 1,
+        props.pageSize
+      )
       .then((res) => {
         setPagination({ total: res.data.total, current: res.data.current });
         setHistoryList([...historyList, ...res.data?.data]);
@@ -256,7 +260,7 @@ export function SearchListGroup() {
     }
     timer = setTimeout(function () {
       syncManagerService
-        .queryHistoryList(val, searchParams, 1, 15)
+        .queryHistoryList(val, searchParams, 1, props.pageSize)
         .then((res) => {
           setPagination({
             total: res.data.total,
@@ -276,19 +280,8 @@ export function SearchListGroup() {
   function onClickEquipmentTag(data: IHistoryInfo) {
     setSearchParams({ equipmentName: data.equipmentName });
   }
-  function onClickItem(data: IHistoryInfo) {
-    if (isInExtension) {
-      sendCommandMsg({
-        type: "OpenNewTab",
-        url: data.url,
-      });
-      sendCommandMsg({ type: "CloseWindow" });
-    } else {
-      window.open(data.url);
-    }
-  }
+
   function handleDelete(data: IHistoryInfo) {
-    console.log(data);
     if (data.id) {
       syncManagerService
         .deleteHistoryItem(data.id)
@@ -304,7 +297,13 @@ export function SearchListGroup() {
     }
   }
   return (
-    <>
+    <section
+      className={props.className}
+      css={`
+        display: flex;
+        flex-direction: column;
+      `}
+    >
       <div
         css={`
           margin: 1rem 1rem 0.5rem 1rem;
@@ -340,15 +339,11 @@ export function SearchListGroup() {
       <SearchParamBar data={searchParams} onChange={setSearchParams} />
       <div
         id="scrollableDiv"
-        style={{
-          marginTop: ".5rem",
-          maxHeight: "450px",
-          minHeight: "300px",
-          overflow: "auto",
-          padding: "0 4px",
-          borderTop: "1px solid rgba(140, 140, 140, 0.35)",
-          borderBottom: "1px solid rgba(140, 140, 140, 0.35)",
-        }}
+        css={`
+          margin-top: 0.5rem;
+          flex: 1;
+          overflow: auto;
+        `}
       >
         <InfiniteScroll
           dataLength={historyList.length}
@@ -380,7 +375,7 @@ export function SearchListGroup() {
                 key={group.groupTitle}
                 items={group.items}
                 groupTitle={group.groupTitle}
-                onClick={onClickItem}
+                onClick={props.onClickItem}
                 onClickEquipmentTag={onClickEquipmentTag}
                 onDeleteItem={handleDelete}
               />
@@ -388,6 +383,6 @@ export function SearchListGroup() {
           />
         </InfiniteScroll>
       </div>
-    </>
+    </section>
   );
 }

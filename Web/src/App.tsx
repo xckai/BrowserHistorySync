@@ -29,7 +29,7 @@ export class App extends React.PureComponent {
         >
           <Switch>
             <Route
-              path="/summary"
+              path="/popup"
               component={lazy(() => import("./Pages/Popup"))}
             />
             <Route
@@ -37,10 +37,10 @@ export class App extends React.PureComponent {
               component={lazy(() => import("./Pages/Homepage"))}
             />
             <Route
-              path="/page3"
-              component={lazy(() => import("./Pages/Page3"))}
+              path="/mobile"
+              component={lazy(() => import("./Pages/Mobile"))}
             />
-            <Route path="*" component={lazy(() => import("./Pages/Popup"))} />
+            <Route path="*" component={lazy(() => import("./Pages/Mobile"))} />
           </Switch>
         </Suspense>
       </BrowserRouter>
