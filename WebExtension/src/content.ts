@@ -1,7 +1,6 @@
 let retryTimes = 0;
 async function timer() {
-    browser.runtime.sendMessage({ type: "TimerBasedSyncTrigger" }).then(v => {
-        console.log("TimerBasedSyncTrigger success", v)
+    browser.runtime.sendMessage({ type: "TimerBasedSyncTrigger", referrer: document.referrer }).then(v => {
     }).catch(e => {
         console.error("TimerBasedSyncTrigger", e);
         (retryTimes++ < 3) && setTimeout(timer, 500)

@@ -1,7 +1,7 @@
 import { UrlInfo } from "background";
 import { TimerBasedSyncByAlarm } from "syncStrategy/timerBasedSyncByAlarm";
 import { TimerBasedSyncByContentJS } from "syncStrategy/timerBasedSyncByContentJS";
-import { batchSyncWithRemoteServer, SendToRemote } from "./sender";
+import { batchSyncWithRemoteServer, SendToRemote } from "./remoteSync";
 export type IBatchSyncCallback = (urlInfos: Array<UrlInfo>) => void;
 export interface ISyncStrategy {
   config(callback: IBatchSyncCallback): void;

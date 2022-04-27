@@ -1,6 +1,6 @@
 import { UrlInfo } from "background";
 
-import { SendToRemote } from "../sender";
+import { SendToRemote } from "../remoteSync";
 
 interface UrlInfoData {
   Url: string;

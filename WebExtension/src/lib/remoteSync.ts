@@ -32,9 +32,8 @@ export async function batchSyncWithRemoteServer(urlInfos: Array<UrlInfo>) {
   if (!dataServerUrl) {
     console.error("Remote server URL is null!!")
   }
-  console.log("upload: ", urlInfos, dataServerUrl)
 
-  await post(dataServerUrl + "/api/UrlHistory/BatchSyncUrlHistory", {
+  await post(dataServerUrl + "/api/UrlHistory/BatchSync", {
     equipmentInfo: {
       equipmentName,
       browserType

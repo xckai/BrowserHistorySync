@@ -30,10 +30,10 @@ public class BrowserHistoryService : IBrowserHistoryService
                 var toBeInsert = new List<BrowserHistory>();
                 foreach (var historyDto in historieDtos)
                 {
+                    var targetDt = DateTime.UtcNow.Subtract(new TimeSpan(0, 24, 0, 0));
                     var recordedItem = await _db.UrlHistories.Where(savedItem =>
                             savedItem.Url == historyDto.Url && equipmentInfo.EquipmentName == savedItem.EquipmentName
-                                                            && savedItem.Timestamp >=
-                                                            DateTimeOffset.Now.Subtract(new TimeSpan(0, 24, 0, 0)))
+                                                            && savedItem.Timestamp >= targetDt)
                         .FirstOrDefaultAsync();
                     if (recordedItem != null)
                     {
@@ -45,7 +45,8 @@ public class BrowserHistoryService : IBrowserHistoryService
                             FaviconUrl = historyDto.FaviconUrl,
                             EquipmentName = equipmentInfo?.EquipmentName,
                             Timestamp = DateTime.UtcNow,
-                            BrowserType = equipmentInfo?.BrowserType
+                            BrowserType = equipmentInfo?.BrowserType,
+                            Referrer = historyDto.Referrer
                         });
                     }
                     else
@@ -57,7 +58,8 @@ public class BrowserHistoryService : IBrowserHistoryService
                             FaviconUrl = historyDto.FaviconUrl,
                             EquipmentName = equipmentInfo?.EquipmentName,
                             Timestamp = DateTime.UtcNow,
-                            BrowserType = equipmentInfo?.BrowserType
+                            BrowserType = equipmentInfo?.BrowserType,
+                            Referrer = historyDto.Referrer
                         });
                     }
                 }

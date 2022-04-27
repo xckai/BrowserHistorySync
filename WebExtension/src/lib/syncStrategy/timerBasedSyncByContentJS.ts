@@ -18,6 +18,7 @@ export class TimerBasedSyncByContentJS implements ISyncStrategy {
             Url: tab.url,
             Title: tab.title,
             FaviconUrl: tab.favIconUrl,
+            Referrer: msg.referrer
           }
         ])
       }

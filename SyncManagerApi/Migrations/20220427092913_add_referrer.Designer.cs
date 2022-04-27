@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SyncManagerApi.Models.DB;
@@ -11,9 +12,10 @@ using SyncManagerApi.Models.DB;
 namespace SyncManagerApi.Migrations
 {
     [DbContext(typeof(BrowserHistoryContext))]
-    partial class BrowserHistoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220427092913_add_referrer")]
+    partial class add_referrer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
