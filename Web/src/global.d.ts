@@ -10,6 +10,10 @@ declare module '*.avif' {
     const src: string;
     export default src;
 }
+declare module '*.ico' {
+    const src: string;
+    export default src;
+}
 
 declare module '*.bmp' {
     const src: string;
