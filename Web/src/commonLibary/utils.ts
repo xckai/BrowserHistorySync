@@ -1,4 +1,7 @@
+import { set } from "lodash";
 
+
+let callbackIndex = 0;
 export interface Msg {
     type: "GetConfig" | "ResizeWindow" | "SetConfig" | "OpenNewTab" | "CloseWindow"
     syncManagerConfig?: SyncManagerConfig
@@ -41,4 +44,22 @@ export function hashIntoColor(str: string) {
         "#55acee", "#3b5999", "#cd201f", "cyan", "green", "red", "#87d068"
     ]
     return colors[hashIntoNumber(str) % colors.length];
+}
+export function jsonp(url: string, key: string, callbackNamePath: string) {
+    return new Promise<any>((resolve, rej) => {
+
+        set(window, callbackNamePath, (data: any) => { resolve(data) });
+        let script = document.getElementById(key) as HTMLScriptElement;
+        if (script != null) {
+            script.remove();
+        }
+
+        script = document.createElement("script");
+        script.src = url;
+        script.id = key;
+        script.onerror = (error) => {
+            rej(error)
+        }
+        document.getElementsByTagName("head")[0].appendChild(script);
+    })
 }

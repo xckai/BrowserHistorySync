@@ -5,15 +5,14 @@ import baidu from "../../assets/baidu.ico";
 import google from "../../assets/google.ico";
 import bing from "../../assets/bing.png";
 import historySync from "../../assets/historySync.png";
-export type SearchProvider = "Google" | "Bing" | "Baidu" | "HistorySync";
+export type SearchProvider = "Google" | "Bing" | "Baidu" | "BrowserHistory";
 const SearchProviderTagContainer = styled.div`
+position:relative;
   display: flex;
   width: 2rem;
   height: 1.8rem;
-  border-radius: 2px;
   justify-content: space-around;
   align-items: center;
-  background: #0000002f;
   cursor: pointer;
   color: black;
   img {
@@ -24,11 +23,13 @@ const SearchProviderTagContainer = styled.div`
   span {
     font-weight: 500;
   }
+}
 `;
 export default function SearchProviderTag(props: {
   className?: string;
   searchProvider: SearchProvider;
   title?: string;
+  onClick?: (searchProvider: SearchProvider) => void;
 }) {
   function getIcon(provider: SearchProvider) {
     switch (provider) {
@@ -41,7 +42,7 @@ export default function SearchProviderTag(props: {
       case "Google": {
         return google;
       }
-      case "HistorySync": {
+      case "BrowserHistory": {
         return historySync;
       }
       default: {
@@ -60,7 +61,7 @@ export default function SearchProviderTag(props: {
       case "Google": {
         return "谷歌搜索";
       }
-      case "HistorySync": {
+      case "BrowserHistory": {
         return "浏览器访问记录中搜索";
       }
       default: {
@@ -72,6 +73,7 @@ export default function SearchProviderTag(props: {
     <SearchProviderTagContainer
       className={props.className}
       title={getTitle(props.searchProvider)}
+      onClick={() => { props?.onClick && props?.onClick(props.searchProvider) }}
     >
       <img src={getIcon(props.searchProvider)} />
     </SearchProviderTagContainer>

@@ -1,7 +1,7 @@
 import React from "react";
 
 import styled from "styled-components";
-import SearchProviderTag from "./SearchProviderTag";
+import SearchProviderTag, { SearchProvider } from "./SearchProviderTag";
 const Divider = styled.div`
   margin: 5px;
   height: 1px;
@@ -18,7 +18,10 @@ const Container = styled.div`
     }
   }
 `;
-export function SearchBoxProviderFooter() {
+export function SearchBoxProviderFooter(props: {
+  onSearchProviderChange: (searchProvider: SearchProvider) => void;
+  currentSearchProvider: SearchProvider;
+}) {
   return (
     <Container>
       <Divider />
@@ -29,15 +32,41 @@ export function SearchBoxProviderFooter() {
           span {
             padding: 5px 8px;
           }
+          .search_tag{
+            &.active{
+              &::after{
+                position: absolute;
+                content: " ";
+                height: 2px;
+                bottom: 0;
+                width: 1rem;
+                border-radius: 1px;
+                background: #40a9ff;
+              }
+          }
+        }
         `}
       >
         <span> Search with: </span>
-        <SearchProviderTag className="search_tag" searchProvider="Google" />
-        <SearchProviderTag className="search_tag" searchProvider="Baidu" />
-        <SearchProviderTag className="search_tag" searchProvider="Bing" />
         <SearchProviderTag
-          className="search_tag"
-          searchProvider="HistorySync"
+          className={props.currentSearchProvider == "Google" ? "search_tag active" : "search_tag"}
+          searchProvider="Google"
+          onClick={props?.onSearchProviderChange}
+        />
+        <SearchProviderTag
+          className={props.currentSearchProvider == "Baidu" ? "search_tag active" : "search_tag"}
+          searchProvider="Baidu"
+          onClick={props?.onSearchProviderChange}
+        />
+        <SearchProviderTag
+          className={props.currentSearchProvider == "Bing" ? "search_tag active" : "search_tag"}
+          searchProvider="Bing"
+          onClick={props?.onSearchProviderChange}
+        />
+        <SearchProviderTag
+          className={props.currentSearchProvider == "BrowserHistory" ? "search_tag active" : "search_tag"}
+          searchProvider="BrowserHistory"
+          onClick={props?.onSearchProviderChange}
         />
       </div>
     </Container>

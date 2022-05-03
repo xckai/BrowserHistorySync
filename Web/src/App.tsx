@@ -35,7 +35,7 @@ export class App extends React.PureComponent {
             />
             <Route
               path="/homepage"
-              component={lazy(() => import("./Pages/Homepage"))}
+              component={lazy(() => import("./Pages/Homepage/Index"))}
             />
             <Route
               path="/mobile"
