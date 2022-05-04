@@ -63,3 +63,28 @@ export function jsonp(url: string, key: string, callbackNamePath: string) {
         document.getElementsByTagName("head")[0].appendChild(script);
     })
 }
+export function getRecommendResolution4BingWallpaper(){
+    let screenW = screen.availWidth * window.devicePixelRatio;
+    let screenH = screen.availHeight* window.devicePixelRatio
+    if(screenW > screenH){
+        if(screenH > 1200){
+            return "UHD"
+        };
+        if(screenH > 1080) {
+            return "1920x1200"
+        }
+        if(screenH > 768){
+            return "1920x1080"
+        }
+        return screenW > 1280 ? "1366x768" :"1280x768";
+    }else{
+        if(screenW>720){
+            return "768x1280"
+        }
+        if(screenW > 480) {
+            return "720x1280"
+        }
+        return "480x800"
+    }
+
+}

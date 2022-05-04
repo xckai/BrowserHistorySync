@@ -2,7 +2,7 @@ import {
   AxiosResponse,
   default as axios
 } from 'axios';
-import { get, map, trim } from 'lodash';
+import { get, map, result, trim } from 'lodash';
 import { jsonp } from 'src/commonLibary/utils';
 import { SearchProvider } from 'src/Pages/Homepage/SearchProviderTag';
 import { IHistoryInfo, IPagination } from './syncManagerService';
@@ -29,25 +29,8 @@ class SearchSuggestionService {
     }
     return this.getHistorySearchSuggestion(keyword);
   }
-  async getHistorySearchSuggestion(keyword?: string) {
-    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl ?? ""
-      }/api/UrlHistory/Query`, {
-      params: {
-        pageIndex: 1,
-        pageSize: 10,
-        keyword: trim(keyword)
-      }
-    }).then(res => {
-      return res.data.data.map(info => ({
-        title: info.title,
-        url: info.url,
-        iconURL: info.faviconUrl,
-        type: "history"
-      } as SearchSuggestListItemMode))
-    })
-  }
   handleSuggestion(crtSearchProvider: SearchProvider, suggestItem: SearchSuggestListItemMode) {
-    console.log(crtSearchProvider,suggestItem)
+    console.log(crtSearchProvider, suggestItem)
     if (crtSearchProvider == 'BrowserHistory') {
       window.open(suggestItem.url);
       return;
@@ -65,11 +48,29 @@ class SearchSuggestionService {
       return;
     }
   }
+  async getHistorySearchSuggestion(keyword?: string) {
+    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl ?? ""
+      }/api/UrlHistory/Query`, {
+      params: {
+        pageIndex: 1,
+        pageSize: 10,
+        keyword: trim(keyword)
+      }
+    }).then(res => {
+      return res.data.data.map(info => ({
+        title: info.title,
+        url: info.url,
+        iconURL: info.faviconUrl,
+        type: "history"
+      } as SearchSuggestListItemMode))
+    })
+  }
+
   async getGoogleSuggestion(keyword: string) {
     return jsonp(`https://suggestqueries.google.com/complete/search?client=gws-wiz&q=${keyword}&jsonp=window.google_sug`, "google_sug", "google_sug").then(data => {
       console.log(data);
       let results = get(data, "[0]");
-      if (results) {
+      if (results && results.length > 0) {
         let suggestions = map(results, item => ({
           title: item[0],
           type: "suggest"
@@ -86,7 +87,7 @@ class SearchSuggestionService {
   async getBaiduSuggestion(keyword: string) {
     return jsonp(`https://suggestion.baidu.com/su?wd=${keyword}&cb=window.baidu_sug`, "baidu_sug", "baidu_sug").then(data => {
       let results = get(data, "s");
-      if (results) {
+      if (results && results.length > 0) {
         let suggestions = map(results, item => ({
           title: item,
           type: "suggest"
@@ -104,7 +105,7 @@ class SearchSuggestionService {
   async getBingSuggestion(keyword: string) {
     return jsonp(`https://api.bing.com/qsonhs.aspx?type=cb&q=${keyword}&cb=window.bing.sug`, "bing_suggestion", "bing.sug").then(data => {
       let results = get(data, "AS.Results[0].Suggests");
-      if (results) {
+      if (results && results.length > 0) {
         let suggestions = map(results, item => ({
           title: item.Txt,
           type: "suggest"
@@ -118,9 +119,7 @@ class SearchSuggestionService {
       }
     })
   }
-  async getBingWrapper() {
-    return axios.get("https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN");
-  }
+
 }
 
 export const searchSuggestionService = new SearchSuggestionService()

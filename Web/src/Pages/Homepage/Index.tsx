@@ -1,6 +1,6 @@
 import React from 'react';
 import SearchBox from './SearchBox';
-import { WallWrapper } from './WallWrapper';
+import { WallPaper } from './WallPaper';
 
 export default function Homepage() {
   return (
@@ -11,7 +11,7 @@ export default function Homepage() {
 
       `}
     >
-      <WallWrapper></WallWrapper>
+      <WallPaper></WallPaper>
       <SearchBox css={`max-width: 40rem;width:90%; margin: 0px auto; margin-top: 25vh;`}></SearchBox>
     </section>
   );
