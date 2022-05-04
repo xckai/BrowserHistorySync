@@ -36,10 +36,14 @@ const StyledWrapperContainer = styled.div`
   }
 `;
 export function WallPaper() {
-  const [imageInfo, setImageInfo] = useState({} as BingWallWrapperInfo);
+  const cacheItem = window.localStorage.getItem("wallpaper_cache");
+  const [imageInfo, setImageInfo] = useState(
+    cacheItem ? JSON.parse(cacheItem) : ({} as BingWallWrapperInfo)
+  );
   useEffect(() => {
     wallpaperService.getBingWallPaper().then((res) => {
       setImageInfo(res);
+      window.localStorage.setItem("wallpaper_cache", JSON.stringify(res));
     });
   }, []);
   return (
