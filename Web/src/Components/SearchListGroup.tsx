@@ -15,7 +15,7 @@ import {
   IHistoryInfo,
   SearchParams,
   syncManagerService,
-} from "src/services/syncManagerServic";
+} from "src/services/syncManagerService";
 import moment from "moment";
 import _ from "lodash";
 import styled from "styled-components";

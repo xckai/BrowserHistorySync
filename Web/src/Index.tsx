@@ -8,13 +8,10 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import App from "./App";
-import { AppStore } from "./commonLibary/PageStore";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={AppStore}>
-      <App />
-    </Provider>
+    <App />
   </React.StrictMode>,
   document.getElementById("app")
 );

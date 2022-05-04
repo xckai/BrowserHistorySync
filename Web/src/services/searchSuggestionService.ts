@@ -5,7 +5,7 @@ import {
 import { get, map, trim } from 'lodash';
 import { jsonp } from 'src/commonLibary/utils';
 import { SearchProvider } from 'src/Pages/Homepage/SearchProviderTag';
-import { IHistoryInfo, IPagination } from './syncManagerServic';
+import { IHistoryInfo, IPagination } from './syncManagerService';
 export interface SearchSuggestListItemMode {
   title: string;
   url?: string;

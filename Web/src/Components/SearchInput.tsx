@@ -7,7 +7,7 @@ import React, { PureComponent, useState, version } from "react";
 import {
   IHistoryInfo,
   syncManagerService,
-} from "src/services/syncManagerServic";
+} from "src/services/syncManagerService";
 const { Option } = Select;
 
 export function SearchInput() {
