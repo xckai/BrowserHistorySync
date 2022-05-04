@@ -23,7 +23,6 @@ position:relative;
   span {
     font-weight: 500;
   }
-}
 `;
 export default function SearchProviderTag(props: {
   className?: string;
