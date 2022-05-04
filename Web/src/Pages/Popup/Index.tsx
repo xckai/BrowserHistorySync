@@ -17,7 +17,7 @@ import {
 import {
   IHistoryInfo,
   syncManagerService,
-} from "src/services/syncManagerServic";
+} from "src/services/syncManagerService";
 import { Logo } from "../../Components/Logo";
 import { SearchList, SearchListItem } from "./Components/SearchList";
 import { SearchListGroup } from "../../Components/SearchListGroup";

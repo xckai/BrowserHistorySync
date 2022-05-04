@@ -3,6 +3,7 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import _ from "lodash";
+import "./App.less";
 export class App extends React.PureComponent {
   render() {
     return (
@@ -30,17 +31,17 @@ export class App extends React.PureComponent {
           <Switch>
             <Route
               path="/popup"
-              component={lazy(() => import("./Pages/Popup"))}
+              component={lazy(() => import("./Pages/Popup/Index"))}
             />
             <Route
               path="/homepage"
-              component={lazy(() => import("./Pages/Homepage"))}
+              component={lazy(() => import("./Pages/Homepage/Index"))}
             />
             <Route
               path="/mobile"
-              component={lazy(() => import("./Pages/Mobile"))}
+              component={lazy(() => import("./Pages/Mobile/Index"))}
             />
-            <Route path="*" component={lazy(() => import("./Pages/Mobile"))} />
+            <Route path="*" component={lazy(() => import("./Pages/Homepage/Index"))} />
           </Switch>
         </Suspense>
       </BrowserRouter>

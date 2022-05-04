@@ -7,6 +7,8 @@ const rename = require("gulp-rename");
 const concat = require("gulp-concat");
 const uglify = require("gulp-uglify");
 const inject = require("gulp-inject-string");
+const zip = require("gulp-zip");
+
 function getTsProject(option) {
   return ts.createProject(
     path.resolve(__dirname, "./tsconfig.json"),
@@ -25,7 +27,7 @@ gulp.task("clear-dist", () => {
       console.log("文件清理完成");
     });
 });
-gulp.task("build", () => {
+function getBuildStream() {
   const staticFiles = gulp.src([
     path.resolve(__dirname, "./src/static/**/*.*"),
   ]);
@@ -81,7 +83,15 @@ gulp.task("build", () => {
     contentjs$,
     pagesHtml$,
     popup$,
-  ]).pipe(gulp.dest(path.resolve(__dirname, "./dist")));
+  ]);
+}
+gulp.task("build", () => {
+  return getBuildStream().pipe(gulp.dest(path.resolve(__dirname, "./dist")));
+});
+gulp.task("pkg_chrome", () => {
+  return getBuildStream()
+    .pipe(zip("pkg.zip"))
+    .pipe(gulp.dest(path.resolve(__dirname, "./public")));
 });
 
 gulp.task(

@@ -18,9 +18,6 @@
     "moduleResolution": "node",
     "noEmit": true,
     "experimentalDecorators": true,
-    "baseUrl": ".",
-  },
-  "include": [
-    "src"
-  ]
+    "baseUrl": "."
+  }
 }

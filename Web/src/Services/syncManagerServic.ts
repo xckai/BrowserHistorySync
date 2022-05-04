@@ -1,4 +1,7 @@
-import { AxiosResponse, default as axios } from "axios";
+import {
+  AxiosResponse,
+  default as axios
+} from 'axios';
 
 export interface IPagination<T> {
   current: number;

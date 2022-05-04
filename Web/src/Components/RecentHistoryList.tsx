@@ -4,7 +4,7 @@ import moment from "moment";
 import React from "react";
 import { css, cx } from "@emotion/css";
 
-import { IHistoryInfo } from "src/services/syncManagerService";
+import { IHistoryInfo } from "src/services/syncManagerServic";
 export function RecentHistoryList(props: { data: Array<IHistoryInfo> }) {
   return (
     <List

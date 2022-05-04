@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "build": "cross-env gulp build",
-    "start": "cross-env gulp dev"
+    "start": "cross-env gulp dev",
+    "pkg_chrome":"cross-env gulp pkg_chrome"
   },
   "devDependencies": {
     "@types/firefox-webext-browser": "^94.0.1",

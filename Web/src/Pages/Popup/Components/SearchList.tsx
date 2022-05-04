@@ -15,7 +15,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {
   IHistoryInfo,
   syncManagerService,
-} from "src/services/syncManagerService";
+} from "src/services/syncManagerServic";
 import moment from "moment";
 import { hashIntoColor, sendCommandMsg } from "src/commonLibary/utils";
 interface SearchParams {

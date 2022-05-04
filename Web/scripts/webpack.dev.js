@@ -19,7 +19,7 @@ module.exports = {
     hot: true,
     historyApiFallback: true,
     proxy: {
-      "/api": "http://localhost:5266",
+      "/api": "http://192.168.0.123:18080/",
     },
   },
 };

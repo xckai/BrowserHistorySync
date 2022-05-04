@@ -15,7 +15,7 @@ import {
   sendCommandMsg,
 } from "src/commonLibary/utils";
 import { SearchListGroup } from "src/Components/SearchListGroup";
-import { IHistoryInfo } from "src/services/syncManagerServic";
+import { IHistoryInfo } from "src/services/syncManagerService";
 import { Logo } from "../../Components/Logo";
 export default function Mobile() {
   function onClickItem(data: IHistoryInfo) {
