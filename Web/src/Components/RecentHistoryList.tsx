@@ -21,7 +21,6 @@ export function RecentHistoryList(props: { data: Array<IHistoryInfo> }) {
             title={<a href={item.url}>{item.title}</a>}
             description={
               <div>
-                {" "}
                 <span>{moment(item.timestamp).format("YYYY-MM-DD HH:mm")}</span>
               </div>
             }

@@ -1,5 +1,14 @@
-import { List, Avatar, Input, Divider, Spin, Tag, message } from "antd";
-import React, { useEffect, useState } from "react";
+import {
+  List,
+  Avatar,
+  Input,
+  Divider,
+  Spin,
+  Tag,
+  message,
+  InputRef,
+} from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -195,6 +204,7 @@ export function SearchListGroup(props: {
   const [searchParams, setSearchParams] = useState({} as SearchParams);
   let [searchValue, setSearchValue] = useState("");
   let [pagination, setPagination] = useState({ total: 0, current: 1 });
+  const inputRef = useRef<InputRef>();
   useEffect(() => {
     async function getLatestHistoryList() {
       syncManagerService
@@ -215,6 +225,9 @@ export function SearchListGroup(props: {
     }
     setLoading(true);
     getLatestHistoryList();
+    if (inputRef) {
+      inputRef.current?.focus();
+    }
   }, []);
   function List2Groups(list: Array<IHistoryInfo>) {
     return _(list)
@@ -317,6 +330,7 @@ export function SearchListGroup(props: {
         `}
       >
         <Input
+          ref={inputRef}
           size="large"
           placeholder="搜索历史访问记录"
           allowClear
