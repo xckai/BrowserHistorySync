@@ -37,6 +37,7 @@
     "babel-plugin-styless": "^1.4.25",
     "browserlist": "^1.0.1",
     "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^10.2.4",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.2",
     "file-loader": "^6.2.0",

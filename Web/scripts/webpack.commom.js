@@ -9,7 +9,9 @@ const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const webpack = require("webpack");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const buildDistFolderPath =path.resolve(__dirname, "../../SyncManagerApi/wwwroot");
 module.exports = {
   mode: "production",
   entry: {
@@ -18,6 +20,10 @@ module.exports = {
   plugins: [
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /zh-cn|en-gb/),
     new HtmlWebpackPlugin({ template: "src/index.html" }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "./src/public", to: buildDistFolderPath }]
+    }),
     new ForkTsCheckerWebpackPlugin(),
     new WebpackManifestPlugin(),
   ],
@@ -98,7 +104,7 @@ module.exports = {
   },
   output: {
     filename: "[name].[contenthash:8].js",
-    path: path.resolve(__dirname, "../../SyncManagerApi/wwwroot"),
+    path: buildDistFolderPath,
   },
   resolve: {
     plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.json" })],
