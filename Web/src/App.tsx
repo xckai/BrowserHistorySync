@@ -41,7 +41,10 @@ export class App extends React.PureComponent {
               path="/mobile"
               component={lazy(() => import("./Pages/Mobile/Index"))}
             />
-            <Route path="*" component={lazy(() => import("./Pages/Homepage/Index"))} />
+            <Route
+              path="*"
+              component={lazy(() => import("./Pages/Homepage/Index"))}
+            />
           </Switch>
         </Suspense>
       </BrowserRouter>

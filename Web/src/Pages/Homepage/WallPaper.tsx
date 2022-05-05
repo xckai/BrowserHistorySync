@@ -21,16 +21,16 @@ const StyledWrapperContainer = styled.div`
   background-color: #444;
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   .info {
     position: absolute;
     bottom: 0.1rem;
     right: 1rem;
     a {
       font-size: 90%;
-      opacity: 0.7;
-      color: gray;
+      color: #bbb;
       &:hover {
-        opacity: 1;
+        color: #1890ff;
       }
     }
   }
