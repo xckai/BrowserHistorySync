@@ -50,6 +50,14 @@ export function WallPaper() {
     <StyledWrapperContainer
       style={{ backgroundImage: `url(${imageInfo.imgUrl})` }}
     >
+      <div css={`
+        background:radial-gradient( ellipse farthest-side at center,rgba(0,0,0,0)100%,rgba(0,0,0,.2) 150%);
+        position: absolute;
+        left:0;
+        right:0;
+        top:0;
+        bottom:0
+      `}></div>
       <div className="info">
         <a
           target="_blank"
