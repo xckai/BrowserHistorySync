@@ -72,18 +72,18 @@ export default function SearchBox(props: {
     setInputForced(true);
   }, []);
   const handleSearch = useCallback((provider: SearchProvider, val: string) => {
-    setSuggestionList([]);
     setCrtActivedItemIdx(0);
     if (trim(val) == "") {
+      setSuggestionList([]);
       return;
     }
-    setLoading(true);
     if (timer) {
       clearTimeout(timer);
       timer = 0;
     }
     timer = setTimeout(function () {
-      console.log(provider, val);
+      setLoading(true);
+      setSuggestionList([]);
       searchSuggestionService
         .getSuggestion(provider, val)
         .then((res) => {
@@ -94,7 +94,7 @@ export default function SearchBox(props: {
           console.error(e);
           setLoading(false);
         });
-    }, 300);
+    }, 100);
   }, []);
   // function handleSearch(val: string) {
 
@@ -109,6 +109,10 @@ export default function SearchBox(props: {
     },
     [crtSearchProvider]
   );
+  function onSearchProviderChanged(provider:SearchProvider){
+    setCrtSearchProvider(provider);
+    window.localStorage.setItem("latest_used_provider",provider);
+  }
   function onKeyDown(e: KeyboardEvent) {
     console.log(e.key);
     if (e.key == "ArrowUp") {
@@ -161,9 +165,7 @@ export default function SearchBox(props: {
           "BrowserHistory",
         ];
         let crtProviderIdx = providers.indexOf(crtSearchProvider);
-        setCrtSearchProvider(
-          providers[(crtProviderIdx + 1) % providers.length]
-        );
+        onSearchProviderChanged(providers[(crtProviderIdx + 1) % providers.length])
       } else {
         setInputForced(true);
       }
@@ -174,6 +176,10 @@ export default function SearchBox(props: {
   }, [crtSearchProvider, inputForced]);
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
+    const latestUsedProvider = window.localStorage.getItem("latest_used_provider");
+    if(latestUsedProvider){
+      onSearchProviderChanged(latestUsedProvider as SearchProvider);
+    }
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
@@ -209,7 +215,7 @@ export default function SearchBox(props: {
             />
             <SearchBoxProviderFooter
               currentSearchProvider={crtSearchProvider}
-              onSearchProviderChange={(p) => setCrtSearchProvider(p)}
+              onSearchProviderChange={onSearchProviderChanged}
             />
           </div>
         )}

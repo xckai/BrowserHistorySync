@@ -59,6 +59,7 @@
     "webpack-dev-server": "^4.1.1"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@emotion/css": "^11.9.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
@@ -70,10 +71,12 @@
     "core-js": "^3.13.1",
     "i": "^0.3.7",
     "lodash": "^4.17.21",
+    "moment": "^2.29.3",
     "npm": "^8.7.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-is": "^18.1.0",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "redux": "^4.1.1",
