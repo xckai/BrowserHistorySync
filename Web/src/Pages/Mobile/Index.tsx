@@ -26,6 +26,7 @@ export default function Mobile() {
       css={`
         width: 100%;
         height: 100vh;
+        background:#fff;
       `}
     >
       <div className="bar">

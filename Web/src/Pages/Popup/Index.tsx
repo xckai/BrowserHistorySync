@@ -22,7 +22,7 @@ import { Logo } from "../../Components/Logo";
 import { SearchList, SearchListItem } from "./Components/SearchList";
 import { SearchListGroup } from "../../Components/SearchListGroup";
 export default function Page1() {
-  const [isInit, setIsInit] = useState(true);
+  const [isInit, setIsInit] = useState(false);
   const resizeObserver = useMemo(
     () =>
       new ResizeObserver((entires) => {
@@ -37,12 +37,10 @@ export default function Page1() {
     []
   );
   const onRefChanged = useCallback((node: HTMLElement) => {
-    console.log(node);
     if (node != null) {
       resizeObserver.observe(node);
     }
   }, []);
-  useRef(null);
   useEffect(() => {
     if (isInExtension()) {
       listenToParentMsg("SetConfig", (msg) => {
@@ -67,23 +65,20 @@ export default function Page1() {
     <section
       ref={onRefChanged}
       css={`
-        width: 30rem;
+        width: 100%;
+        background:#fff;
       `}
     >
       <div className="bar">
         <Logo />
       </div>
-      {isInit ? (
-        <Spin tip="正在初始化" />
-      ) : (
-        <SearchListGroup
+      {!isInit && <SearchListGroup
           css={`
             max-height: 500px;
           `}
           onClickItem={onClickItem}
           pageSize={15}
-        />
-      )}
+        />}
     </section>
   );
 }

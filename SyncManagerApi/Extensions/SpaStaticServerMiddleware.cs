@@ -11,7 +11,8 @@ public static class SpaStaticServerMiddleware
         {
             OnPrepareResponse = ctx =>
             {
-                var mimeList = new List<string>() { "application/javascript", "image/png" };
+                var mimeList = new List<string>() { "application/javascript", "image/png","image/svg+xml", "image/x-icon"};
+                Console.WriteLine(ctx.Context.Response.Headers[HeaderNames.ContentType]);
                 if (mimeList.Contains(ctx.Context.Response.Headers[HeaderNames.ContentType]))
                 {
                     const int durationInSeconds = 60 * 60 * 24 * 30;
