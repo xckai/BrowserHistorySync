@@ -10,7 +10,8 @@ const StyledInput = styled.input`
   border-radius: 3px;
   height: 2rem;
   font-size: 110%;
-  text-indent: 5rem;
+  padding-left: 4rem;
+  padding-right: 1rem;
   position: relative;
   background-color: rgba(0, 0, 0, 0);
   &:focus {
@@ -25,14 +26,14 @@ const StyledInput = styled.input`
 const StyledSearchInput = styled.div`
   position: relative;
   box-sizing: content-box;
-  padding:0 .5rem;
+  padding: 0 0.5rem;
   height: 2rem;
   .search_icon {
     position: absolute;
     z-index: 2;
     padding: 0.3rem;
     width: 2rem;
-    height:2rem;
+    height: 2rem;
   }
   .search_tag {
     position: absolute;
@@ -52,46 +53,49 @@ const StyledSearchInput = styled.div`
   }
 `;
 export function SearchBoxInput(props: {
-  className?: string, searchValue: string,
-  onSearchValueChange: (val: string) => void,
+  className?: string;
+  searchValue: string;
+  onSearchValueChange: (val: string) => void;
   onFocus: () => void;
-  currentSearchProvider: SearchProvider,
-  isForcused: boolean,
+  currentSearchProvider: SearchProvider;
+  isForcused: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>();
   useEffect(() => {
     if (props.isForcused) {
       inputRef?.current?.focus();
     }
-  }, [props.isForcused, props.currentSearchProvider])
-  return <StyledSearchInput className={props.className}>
-    <img className="search_icon" src={search} alt="" />
-    <StyledInput
-      className="search_input"
-      placeholder={`Search With ${props.currentSearchProvider}`}
-      value={props.searchValue}
-      onChange={(e) => {
-        props.onSearchValueChange(e.target.value)
-      }}
-      ref={inputRef}
-      onFocusCapture={props.onFocus}
-      autoFocus={false}
-      autoComplete={"off"}
-      onBeforeInput={props.onFocus}
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault()
-        props.onFocus();
-      }}
-    />
-    <SearchProviderTag
-      className="search_tag"
-      searchProvider={props.currentSearchProvider}
-    />
-    <img
-      className="enter_icon"
-      src={enter}
-      style={{ visibility: props.isForcused ? "visible" : "hidden" }}
-    />
-  </StyledSearchInput>
+  }, [props.isForcused, props.currentSearchProvider]);
+  return (
+    <StyledSearchInput className={props.className}>
+      <img className="search_icon" src={search} alt="" />
+      <StyledInput
+        className="search_input"
+        placeholder={`Search With ${props.currentSearchProvider}`}
+        value={props.searchValue}
+        onChange={(e) => {
+          props.onSearchValueChange(e.target.value);
+        }}
+        ref={inputRef}
+        onFocusCapture={props.onFocus}
+        autoFocus={false}
+        autoComplete={"off"}
+        onBeforeInput={props.onFocus}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          props.onFocus();
+        }}
+      />
+      <SearchProviderTag
+        className="search_tag"
+        searchProvider={props.currentSearchProvider}
+      />
+      <img
+        className="enter_icon"
+        src={enter}
+        style={{ visibility: props.isForcused ? "visible" : "hidden" }}
+      />
+    </StyledSearchInput>
+  );
 }

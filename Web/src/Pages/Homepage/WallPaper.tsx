@@ -21,25 +21,29 @@ const StyledWrapperContainer = styled.div`
   background-color: #444;
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   .info {
     position: absolute;
     bottom: 0.1rem;
     right: 1rem;
     a {
       font-size: 90%;
-      opacity: 0.7;
-      color: gray;
+      color: #bbb;
       &:hover {
-        opacity: 1;
+        color: #1890ff;
       }
     }
   }
 `;
 export function WallPaper() {
-  const [imageInfo, setImageInfo] = useState({} as BingWallWrapperInfo);
+  const cacheItem = window.localStorage.getItem("wallpaper_cache");
+  const [imageInfo, setImageInfo] = useState(
+    cacheItem ? JSON.parse(cacheItem) : ({} as BingWallWrapperInfo)
+  );
   useEffect(() => {
     wallpaperService.getBingWallPaper().then((res) => {
       setImageInfo(res);
+      window.localStorage.setItem("wallpaper_cache", JSON.stringify(res));
     });
   }, []);
   return (

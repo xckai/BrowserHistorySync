@@ -82,7 +82,7 @@ class SearchSuggestionService {
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
-    })
+    },rej=>[{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
   }
   async getBaiduSuggestion(keyword: string) {
     return jsonp(`https://suggestion.baidu.com/su?wd=${keyword}&cb=window.baidu_sug`, "baidu_sug", "baidu_sug").then(data => {
@@ -99,7 +99,7 @@ class SearchSuggestionService {
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
-    })
+    },rej=>[{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
   }
 
   async getBingSuggestion(keyword: string) {
@@ -117,7 +117,7 @@ class SearchSuggestionService {
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
-    })
+    },rej=>[{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
   }
 
 }
