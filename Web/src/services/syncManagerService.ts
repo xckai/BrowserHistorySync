@@ -7,6 +7,7 @@ export interface IPagination<T> {
   current: number;
   total: number;
   data: Array<T>;
+  pageSize: number;
 }
 export interface IHistoryInfo {
   id?: number;
@@ -46,6 +47,13 @@ class SyncManagerService {
   async deleteHistoryItem(id: number) {
     return axios.delete(
       `${window.syncManagerConfig?.dataServerUrl ?? ""}/api/UrlHistory?id=${id}`
+    );
+  }
+   async batchDeleteHistoryItem(ids: Array<number>) {
+    return axios.delete(
+      `${window.syncManagerConfig?.dataServerUrl ?? ""}/api/UrlHistory/BatchDelete`, {
+        data: ids
+      }
     );
   }
 }

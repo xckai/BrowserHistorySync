@@ -105,6 +105,7 @@ module.exports = {
   output: {
     filename: "[name].[contenthash:8].js",
     path: buildDistFolderPath,
+    publicPath: '/'
   },
   resolve: {
     plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.json" })],

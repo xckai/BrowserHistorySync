@@ -29,6 +29,12 @@ namespace SyncManagerApi.Controllers
             await _browserHistoryService.Delete(id);
             return NoContent();
         }
+        [HttpDelete("BatchDelete")]
+        public async Task<ActionResult> BatchDeleteHistory([FromBody] IList<int> ids)
+        {
+            await _browserHistoryService.BatchDelete(ids);
+            return NoContent();
+        }
         [HttpGet("QueryUrlHistory")]
         public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
         {

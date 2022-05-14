@@ -19,7 +19,7 @@ public class BrowserHistoryService : IBrowserHistoryService
     }
 
 
-    public async Task BatchSync(List<HistoryDto>? historieDtos, EquipmentInfo equipmentInfo)
+    public async Task BatchSync(IList<HistoryDto>? historieDtos, EquipmentInfo equipmentInfo)
     {
         if (historieDtos != null)
         {
@@ -86,10 +86,22 @@ public class BrowserHistoryService : IBrowserHistoryService
         var toBeDeleted = await _db.UrlHistories.FirstOrDefaultAsync(history => history.Id == id);
         if (toBeDeleted == null)
         {
-            throw new Exception("No history recoder founded");
+            throw new Exception("No history record founded");
+        }
+        _db.UrlHistories.Remove(toBeDeleted);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task BatchDelete(IList<int> ids)
+    {
+        var toBeDeleted =  _db.UrlHistories.Where(history => ids.Contains(history.Id));
+        if (toBeDeleted == null)
+        {
+            throw new Exception("No history records founded");
         }
 
-        _db.UrlHistories.Remove(toBeDeleted);
+
+        _db.UrlHistories.RemoveRange(toBeDeleted);
         await _db.SaveChangesAsync();
     }
 
