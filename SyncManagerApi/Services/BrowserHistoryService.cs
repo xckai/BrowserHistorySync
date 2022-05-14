@@ -1,7 +1,9 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using SyncManagerApi.Interface;
 using SyncManagerApi.Models;
 using SyncManagerApi.Models.DB;
+using SyncManagerApi.Utils;
 
 namespace SyncManagerApi.Services;
 
@@ -114,7 +116,7 @@ public class BrowserHistoryService : IBrowserHistoryService
     public async Task<Pagination<BrowserHistory>> Query(QueryParams queryParams, int pageSize, int pageIndex)
     {
         IQueryable<BrowserHistory> query = _db.UrlHistories;
-
+        
         if (queryParams.DateFrom != null)
         {
             queryParams.DateTo = queryParams.DateTo ?? DateTime.Now;
@@ -125,9 +127,18 @@ public class BrowserHistoryService : IBrowserHistoryService
 
         if (!string.IsNullOrWhiteSpace(queryParams.Keyword))
         {
-            query = query.Where(history =>
-                (history.Title.Contains(queryParams.Keyword)
-                 || history.Url.Contains(queryParams.Keyword)));
+            
+            if (StringHelper.IsUrlPrefix(queryParams.Keyword))
+            {
+                query = query.Where(history =>
+                    history.Title.Contains(queryParams.Keyword));
+            }
+            else
+            {
+                query = query.Where(history =>
+                    (history.Title.Contains(queryParams.Keyword)
+                     || history.Url.Contains(queryParams.Keyword)));
+            }
         }
 
         if (queryParams.Equipments != null && queryParams.Equipments.Count > 0)

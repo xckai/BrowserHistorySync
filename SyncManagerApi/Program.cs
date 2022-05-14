@@ -21,9 +21,12 @@ builder.Services.AddControllers().AddNewtonsoftJson().AddJsonOptions(options =>
     options.JsonSerializerOptions.IgnoreNullValues = true;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-Console.WriteLine(builder.Configuration.GetConnectionString("pgsql"));
+// private DI
 builder.Services.AddScoped<IBrowserHistoryService,BrowserHistoryService>();
 builder.Services.AddScoped<IHistoryFilterRuleService, HistoryFilterRuleService>();
+builder.Services.AddScoped<ISuggestionService, SuggestionService>();
+
+
 builder.Services.AddDbContext<BrowserHistoryContext>(dbBuilder=>dbBuilder.UseNpgsql(builder.Configuration.GetConnectionString("pgsql")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

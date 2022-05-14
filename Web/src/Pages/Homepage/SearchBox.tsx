@@ -73,28 +73,30 @@ export default function SearchBox(props: {
   }, []);
   const handleSearch = useCallback((provider: SearchProvider, val: string) => {
     setCrtActivedItemIdx(0);
-    if (trim(val) == "") {
-      setSuggestionList([]);
-      return;
-    }
+    console.log(val);
+
     if (timer) {
       clearTimeout(timer);
       timer = 0;
     }
+    if (trim(val) == "") {
+      setSuggestionList([]);
+      return;
+    }
     timer = setTimeout(function () {
       setLoading(true);
-      setSuggestionList([]);
       searchSuggestionService
         .getSuggestion(provider, val)
         .then((res) => {
-          setSuggestionList(res);
+          timer && setSuggestionList(res);
           setLoading(false);
         })
         .catch((e) => {
           console.error(e);
           setLoading(false);
+          setSuggestionList([]);
         });
-    }, 100);
+    }, 50);
   }, []);
   // function handleSearch(val: string) {
 
@@ -109,9 +111,9 @@ export default function SearchBox(props: {
     },
     [crtSearchProvider]
   );
-  function onSearchProviderChanged(provider:SearchProvider){
+  function onSearchProviderChanged(provider: SearchProvider) {
     setCrtSearchProvider(provider);
-    window.localStorage.setItem("latest_used_provider",provider);
+    window.localStorage.setItem("latest_used_provider", provider);
   }
   function onKeyDown(e: KeyboardEvent) {
     console.log(e.key);
@@ -165,7 +167,9 @@ export default function SearchBox(props: {
           "BrowserHistory",
         ];
         let crtProviderIdx = providers.indexOf(crtSearchProvider);
-        onSearchProviderChanged(providers[(crtProviderIdx + 1) % providers.length])
+        onSearchProviderChanged(
+          providers[(crtProviderIdx + 1) % providers.length]
+        );
       } else {
         setInputForced(true);
       }
@@ -176,8 +180,10 @@ export default function SearchBox(props: {
   }, [crtSearchProvider, inputForced]);
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
-    const latestUsedProvider = window.localStorage.getItem("latest_used_provider");
-    if(latestUsedProvider){
+    const latestUsedProvider = window.localStorage.getItem(
+      "latest_used_provider"
+    );
+    if (latestUsedProvider) {
       onSearchProviderChanged(latestUsedProvider as SearchProvider);
     }
     return () => {

@@ -49,15 +49,14 @@ class SearchSuggestionService {
     }
   }
   async getHistorySearchSuggestion(keyword?: string) {
-    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl ?? ""
-      }/api/UrlHistory/Query`, {
+    return axios.get<any, AxiosResponse<Array<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl ?? ""
+      }/api/Suggestion`, {
       params: {
-        pageIndex: 1,
-        pageSize: 10,
+        maxSize: 10,
         keyword: trim(keyword)
       }
     }).then(res => {
-      return res.data.data.map(info => ({
+      return res.data.map(info => ({
         title: info.title,
         url: info.url,
         iconURL: info.faviconUrl,
@@ -78,7 +77,7 @@ class SearchSuggestionService {
         if (suggestions[0].title != keyword) {
           suggestions = [{ title: keyword, type: "suggest" }, ...suggestions];
         }
-        return suggestions;
+        return suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
@@ -95,7 +94,7 @@ class SearchSuggestionService {
         if (suggestions[0].title != keyword) {
           suggestions = [{ title: keyword, type: "suggest" }, ...suggestions];
         }
-        return suggestions;
+        return  suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
@@ -113,7 +112,7 @@ class SearchSuggestionService {
         if (suggestions[0].title != keyword) {
           suggestions = [{ title: keyword, type: "suggest" }, ...suggestions];
         }
-        return suggestions;
+        return  suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
