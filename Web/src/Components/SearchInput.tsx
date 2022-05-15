@@ -37,7 +37,7 @@ export function SearchInput() {
         timer = 0;
       }
       timer = setTimeout(() => {
-        syncManagerService.queryHistoryList(value).then((res) => {
+        syncManagerService.queryHistoryList({ keyword: value }).then((res) => {
           setSearchResult(res.data?.data);
         });
       }, 300);

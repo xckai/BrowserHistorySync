@@ -9,9 +9,12 @@ const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const webpack = require("webpack");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-const buildDistFolderPath =path.resolve(__dirname, "../../SyncManagerApi/wwwroot");
+const buildDistFolderPath = path.resolve(
+  __dirname,
+  "../../SyncManagerApi/wwwroot"
+);
 module.exports = {
   mode: "production",
   entry: {
@@ -21,8 +24,7 @@ module.exports = {
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /zh-cn|en-gb/),
     new HtmlWebpackPlugin({ template: "src/index.html" }),
     new CopyWebpackPlugin({
-      patterns: [
-        { from: "./src/public", to: buildDistFolderPath }]
+      patterns: [{ from: "./src/public", to: buildDistFolderPath }],
     }),
     new ForkTsCheckerWebpackPlugin(),
     new WebpackManifestPlugin(),
@@ -63,12 +65,22 @@ module.exports = {
             plugins: [
               [
                 "import",
+
                 {
                   libraryName: "antd",
                   libraryDirectory: "lib",
                   style: true,
                 },
                 "antd",
+              ],
+              [
+                "import",
+                {
+                  libraryName: "lodash",
+                  libraryDirectory: "",
+                  camel2DashComponentName: false, // default: true
+                },
+                "lodash",
               ],
               ["babel-plugin-styled-components"],
             ],
@@ -105,7 +117,7 @@ module.exports = {
   output: {
     filename: "[name].[contenthash:8].js",
     path: buildDistFolderPath,
-    publicPath: '/'
+    publicPath: "/",
   },
   resolve: {
     plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.json" })],

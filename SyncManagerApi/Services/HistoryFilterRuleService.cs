@@ -50,7 +50,7 @@ public class HistoryFilterRuleService : IHistoryFilterRuleService
         return new Pagination<ExcludeRule>()
         {
             Total = total,
-            Data = await query.Skip((pageIndex - 1) * pageSize)
+            Data = await query.OrderBy((rule => rule.Id)).Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(),
             PageSize = pageSize,
@@ -84,7 +84,7 @@ public class HistoryFilterRuleService : IHistoryFilterRuleService
         {
             throw new Exception("No rule founded");
         }
-        _db.Update(rule);
+        _db.Entry(toBeEdit).CurrentValues.SetValues(rule);
         await _db.SaveChangesAsync();
         return true;
     }

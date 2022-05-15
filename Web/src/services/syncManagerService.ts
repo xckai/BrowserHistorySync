@@ -19,26 +19,27 @@ export interface IHistoryInfo {
   timestamp: string;
 }
 export interface SearchParams {
-  dateFrom?: moment.Moment;
-  dateTo?: moment.Moment;
+  keyword?: string;
+  datetimeFrom?: moment.Moment;
+  datetimeTo?: moment.Moment;
   equipmentName?: string;
+  pageIndex?: number;
+  pageSize?:number
 }
 class SyncManagerService {
   async queryHistoryList(
-    keyword?: string,
-    searchParam?: SearchParams,
-    pageIndex = 1,
-    pageSize = 15
+    searchParam?: SearchParams
   ) {
+    console.log(searchParam,"searchParam")
     return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(
       `${window.syncManagerConfig?.dataServerUrl ?? ""}/api/UrlHistory/Query`,
       {
         params: {
-          pageIndex: pageIndex,
-          pageSize: pageSize,
-          keyword: keyword,
-          dateFrom: searchParam?.dateFrom?.toISOString(),
-          dateTo: searchParam?.dateTo?.toISOString(),
+          pageIndex: searchParam.pageIndex ?? 1,
+          pageSize: searchParam.pageSize ?? 15,
+          keyword: searchParam.keyword,
+          dateFrom: searchParam?.datetimeFrom?.toISOString(),
+          dateTo: searchParam?.datetimeTo?.toISOString(),
           equipments: searchParam?.equipmentName,
         },
       }

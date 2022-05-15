@@ -108,7 +108,7 @@ export function SearchList() {
     }
     setLoading(true);
     syncManagerService
-      .queryHistoryList(value)
+      .queryHistoryList({ keyword: value })
       .then((res) => {
         setPagination({ total: res.data.total, current: res.data.current });
         setHistoryList([...historyList, ...res.data?.data]);
@@ -127,7 +127,7 @@ export function SearchList() {
     }
     timer = setTimeout(function () {
       syncManagerService
-        .queryHistoryList(val)
+        .queryHistoryList({ keyword: val })
         .then((res) => {
           setPagination({
             total: res.data.total,

@@ -1,13 +1,24 @@
-import { Button, message, Table, TablePaginationConfig } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Table,
+  TablePaginationConfig,
+  DatePicker,
+} from "antd";
 import { FilterValue, SorterResult } from "antd/lib/table/interface";
-import moment from "moment";
-import React, { useCallback, useEffect, useState } from "react";
+import moment, { Moment } from "moment";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import {
   IHistoryInfo,
   SearchParams,
   syncManagerService,
 } from "src/services/syncManagerService";
 import styled from "styled-components";
+import locale from "antd/es/date-picker/locale/zh_CN";
+import { template } from "lodash";
+
 const StyledP = styled.p`
   margin: 0;
   padding: 0;
@@ -15,31 +26,54 @@ const StyledP = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  img {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.3rem;
+  }
 `;
 export default function BrowserHistoryManager() {
   const [tableData, setTableData] = useState([] as Array<IHistoryInfo>);
   const [loading, setLoading] = useState(false);
+  const [searchFilterParam, setSearchFilterParam] = useState({
+    keyword: "",
+    datetimeFrom: moment()
+      .subtract(7, "days")
+      .hours(0)
+      .minute(0)
+      .second(0)
+      .millisecond(0),
+    datetimeTo: moment().hours(23).minute(59).second(59).millisecond(0),
+  } as SearchParams);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 15,
     size: "default",
+    showTotal: (total) => {
+      return template("共 ${total} 条记录")({ total });
+    },
   } as TablePaginationConfig);
-  function loadData(
-    keyword?: string,
-    searchParam?: SearchParams,
-    pageIndex = 1,
-    pageSize = 15
-  ) {
+  const [form] = Form.useForm();
+  useEffect(() => {
+    loadData({
+      ...searchFilterParam,
+      pageSize: pagination.pageSize,
+      pageIndex: pagination.current,
+    });
+  }, []);
+  function loadData(searchParams: SearchParams) {
     setLoading(true);
     syncManagerService
-      .queryHistoryList(keyword, searchParam, pageIndex, pageSize)
+      .queryHistoryList(searchParams)
       .then((res) => {
         setPagination({
+          ...pagination,
           total: res.data.total,
           pageSize: res.data.pageSize,
           current: res.data.current,
-          size: "default",
         });
         setTableData(res.data?.data);
         setLoading(false);
@@ -53,10 +87,7 @@ export default function BrowserHistoryManager() {
         setLoading(false);
       });
   }
-  useEffect(() => {
-    loadData("", {}, 1, 15);
-  }, []);
-  const onChange = useCallback(
+  const onTableChange = useCallback(
     (
       p: TablePaginationConfig,
       f: Record<string, FilterValue | null>,
@@ -64,16 +95,46 @@ export default function BrowserHistoryManager() {
     ) => {
       setLoading(true);
       setPagination({
+        ...pagination,
         pageSize: p.pageSize,
         current: p.current,
         total: p.total,
-        size: "default",
       });
       setTableData([]);
-      loadData("", {}, p.current, p.pageSize);
+      loadData({
+        ...searchFilterParam,
+        pageIndex: p.current,
+        pageSize: p.pageSize,
+      });
     },
-    [setPagination, setLoading]
+    [setPagination, setLoading, searchFilterParam]
   );
+  const onSearchFilterParamSearchValueChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setSearchFilterParam({
+        ...searchFilterParam,
+        keyword: e.target.value,
+      });
+    },
+    [searchFilterParam]
+  );
+  const onSearchFilterParamDatetimeValueChange = useCallback(
+    (values: [Moment, Moment]) => {
+      setSearchFilterParam({
+        ...searchFilterParam,
+        datetimeFrom: values[0]?.hour(0).minute(0).second(0),
+        datetimeTo: values[1].hour(23).minute(59).second(59),
+      });
+    },
+    [searchFilterParam]
+  );
+  const onSearch = useCallback(() => {
+    loadData({
+      ...searchFilterParam,
+      pageSize: pagination.pageSize,
+      pageIndex: pagination.current,
+    });
+  }, [searchFilterParam, pagination]);
   const onDelete = useCallback(() => {
     setLoading(true);
     syncManagerService
@@ -81,7 +142,11 @@ export default function BrowserHistoryManager() {
       .then((res) => {
         message.success("删除成功");
         setSelectedRowKeys([]);
-        loadData("", {}, pagination.current, pagination.pageSize);
+        loadData({
+          ...searchFilterParam,
+          pageSize: pagination.pageSize,
+          pageIndex: pagination.current,
+        });
       })
       .catch((e) => {
         message.error(e.message);
@@ -89,7 +154,7 @@ export default function BrowserHistoryManager() {
       .finally(() => {
         setLoading(false);
       });
-  }, [selectedRowKeys]);
+  }, [selectedRowKeys, searchFilterParam, pagination]);
   const rowSelection = {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
@@ -99,7 +164,14 @@ export default function BrowserHistoryManager() {
     {
       title: "Title",
       dataIndex: "title",
-      render: (value: string) => <StyledP title={value}>{value}</StyledP>,
+      render: (value: string, history: IHistoryInfo) => (
+        <StyledP title={value}>
+          <img src={history.faviconUrl} alt="" />
+          <a target="_blank" href={history.url}>
+            {value}
+          </a>
+        </StyledP>
+      ),
     },
     {
       title: "Url",
@@ -127,13 +199,45 @@ export default function BrowserHistoryManager() {
           justify-content: space-between;
         `}
       >
-        <div></div>
+        <Form layout="inline" form={form}>
+          <Form.Item label="关键字">
+            <Input
+              allowClear
+              placeholder="请输入关键字"
+              width={200}
+              value={searchFilterParam.keyword}
+              onChange={onSearchFilterParamSearchValueChange}
+              onPressEnter={onSearch}
+            />
+          </Form.Item>
+          <Form.Item label="时间范围">
+            <DatePicker.RangePicker
+              locale={locale}
+              value={[
+                searchFilterParam.datetimeFrom,
+                searchFilterParam.datetimeTo,
+              ]}
+              onChange={onSearchFilterParamDatetimeValueChange}
+              disabledDate={(current: any) => {
+                return current && current > moment().endOf("day");
+              }}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" onClick={onSearch} loading={loading}>
+              搜索
+            </Button>
+          </Form.Item>
+        </Form>
         <Button
           danger
           onClick={onDelete}
+          loading={loading}
           disabled={!(selectedRowKeys && selectedRowKeys.length > 0)}
         >
-          删除
+          {!(selectedRowKeys && selectedRowKeys.length > 0)
+            ? "删除"
+            : `删除${selectedRowKeys.length} 条记录`}
         </Button>
       </div>
       <Table
@@ -144,7 +248,7 @@ export default function BrowserHistoryManager() {
         dataSource={tableData}
         pagination={pagination}
         loading={loading}
-        onChange={onChange}
+        onChange={onTableChange}
       />
     </section>
   );

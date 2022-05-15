@@ -154,7 +154,7 @@ function SearchParamBar(props: {
   data: SearchParams;
   onChange: (param: SearchParams) => void;
 }) {
-  return props.data.equipmentName || props.data.dateTo ? (
+  return props.data.equipmentName || props.data.datetimeTo ? (
     <div
       css={`
         margin: 0px 1rem 5px 1rem;
@@ -174,20 +174,20 @@ function SearchParamBar(props: {
           {props.data.equipmentName}
         </Tag>
       )}
-      {props.data.dateFrom && (
+      {props.data.datetimeFrom && (
         <Tag
           closable
           onClose={() => {
             props.onChange({
               ...props.data,
-              dateFrom: undefined,
-              dateTo: undefined,
+              datetimeFrom: undefined,
+              datetimeTo: undefined,
             });
           }}
         >
-          {props.data.dateFrom.format("YY/MM/DD") +
+          {props.data.datetimeFrom.format("YY/MM/DD") +
             "-" +
-            props.data.dateTo.format("YY/MM/DD")}
+            props.data.datetimeTo.format("YY/MM/DD")}
         </Tag>
       )}
     </div>
@@ -201,14 +201,17 @@ export function SearchListGroup(props: {
 }) {
   const [historyList, setHistoryList] = useState([] as Array<IHistoryInfo>);
   const [loading, setLoading] = useState(false);
-  const [searchParams, setSearchParams] = useState({} as SearchParams);
   let [searchValue, setSearchValue] = useState("");
   let [pagination, setPagination] = useState({ total: 0, current: 1 });
   const inputRef = useRef<InputRef>();
   useEffect(() => {
     async function getLatestHistoryList() {
       syncManagerService
-        .queryHistoryList("", {}, pagination.current, props.pageSize)
+        .queryHistoryList({
+          keyword: "",
+          pageIndex: pagination.current,
+          pageSize: props.pageSize,
+        })
         .then((res) => {
           setPagination({
             total: res.data.total,
@@ -247,12 +250,11 @@ export function SearchListGroup(props: {
     }
     setLoading(true);
     syncManagerService
-      .queryHistoryList(
-        searchValue,
-        searchParams,
-        pagination.current + 1,
-        props.pageSize
-      )
+      .queryHistoryList({
+        keyword: searchValue,
+        pageIndex: pagination.current + 1,
+        pageSize: props.pageSize,
+      })
       .then((res) => {
         setPagination({ total: res.data.total, current: res.data.current });
         setHistoryList([...historyList, ...res.data?.data]);
@@ -273,7 +275,11 @@ export function SearchListGroup(props: {
     }
     timer = setTimeout(function () {
       syncManagerService
-        .queryHistoryList(val, searchParams, 1, props.pageSize)
+        .queryHistoryList({
+          keyword: val,
+          pageIndex: 1,
+          pageSize: props.pageSize,
+        })
         .then((res) => {
           setPagination({
             total: res.data.total,
@@ -290,9 +296,7 @@ export function SearchListGroup(props: {
     }, 500);
   }
 
-  function onClickEquipmentTag(data: IHistoryInfo) {
-    setSearchParams({ equipmentName: data.equipmentName });
-  }
+  function onClickEquipmentTag(data: IHistoryInfo) {}
 
   function handleDelete(data: IHistoryInfo) {
     if (data.id) {
@@ -350,7 +354,6 @@ export function SearchListGroup(props: {
           icon={<SettingOutlined />}
         /> */}
       </div>
-      <SearchParamBar data={searchParams} onChange={setSearchParams} />
       <div
         id="scrollableDiv"
         css={`

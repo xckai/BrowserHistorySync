@@ -11,7 +11,13 @@ import styled from "styled-components";
 import logo from "src/assets/icon128.png";
 import BrowserHistoryManager from "./BrowserHistoryManager";
 import FilterRuleManager from "./FilterRuleManager";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useResolvedPath,
+} from "react-router-dom";
 import AdminBreadcrumb from "./AdminBreadcrumb";
 const { Header, Sider, Content } = Layout;
 const StyledLayout = styled(Layout)`
@@ -59,14 +65,20 @@ const StyledLayout = styled(Layout)`
   }
 `;
 export default function Admin() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     window.document.title = "BrowserHistorySync Admin";
   }, []);
+  const localPath = useLocation();
   return (
     <StyledLayout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider
+        collapsedWidth={80}
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+      >
         <div className="logo">
           <img src={logo} alt="" />
           {!collapsed && <span>BrowserHistorySync</span>}
@@ -74,10 +86,10 @@ export default function Admin() {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={[localPath.pathname]}
           items={[
             {
-              key: "1",
+              key: "/admin/browserHistory",
               icon: <HistoryOutlined />,
               label: "浏览历史管理",
               onClick: () => {
@@ -85,7 +97,7 @@ export default function Admin() {
               },
             },
             {
-              key: "2",
+              key: "/admin/filterRule",
               icon: <FilterOutlined />,
               label: "过滤规则配置",
               onClick: () => {
