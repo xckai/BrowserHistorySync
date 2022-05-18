@@ -70,7 +70,7 @@ public class HistoryFilterRuleService : IHistoryFilterRuleService
         var toBeRemoved = await _db.ExcludeRules.FirstOrDefaultAsync(rule => rule.Id == ruleId);
         if (toBeRemoved == null)
         {
-            throw new Exception("No rule founded");
+            throw new HttpRequestException("Target rule not found");
         }
         _db.ExcludeRules.Remove(toBeRemoved);
          await _db.SaveChangesAsync();
@@ -82,7 +82,7 @@ public class HistoryFilterRuleService : IHistoryFilterRuleService
         var toBeEdit = await _db.ExcludeRules.FirstOrDefaultAsync(r => r.Id == rule.Id);
         if (toBeEdit == null)
         {
-            throw new Exception("No rule founded");
+            throw new HttpRequestException("Target rule not found");
         }
         _db.Entry(toBeEdit).CurrentValues.SetValues(rule);
         await _db.SaveChangesAsync();

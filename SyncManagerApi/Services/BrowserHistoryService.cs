@@ -86,7 +86,7 @@ public class BrowserHistoryService : IBrowserHistoryService
         var toBeDeleted = await _db.UrlHistories.FirstOrDefaultAsync(history => history.Id == id);
         if (toBeDeleted == null)
         {
-            throw new Exception("No history record founded");
+            throw new HttpRequestException("No history record founded");
         }
         _db.UrlHistories.Remove(toBeDeleted);
         await _db.SaveChangesAsync();
@@ -97,7 +97,7 @@ public class BrowserHistoryService : IBrowserHistoryService
         var toBeDeleted =  _db.UrlHistories.Where(history => ids.Contains(history.Id));
         if (toBeDeleted == null)
         {
-            throw new Exception("No history records founded");
+            throw new HttpRequestException("No history records founded");
         }
 
 

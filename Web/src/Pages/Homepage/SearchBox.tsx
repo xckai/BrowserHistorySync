@@ -92,7 +92,6 @@ export default function SearchBox(props: {
           setLoading(false);
         })
         .catch((e) => {
-          console.error(e);
           setLoading(false);
           setSuggestionList([]);
         });

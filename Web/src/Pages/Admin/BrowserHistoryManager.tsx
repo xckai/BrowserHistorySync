@@ -22,7 +22,7 @@ import { template } from "lodash";
 const StyledP = styled.p`
   margin: 0;
   padding: 0;
-  max-width: 40rem;
+  max-width: 30rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -187,7 +187,6 @@ export default function BrowserHistoryManager() {
       title: "访问时间",
       dataIndex: "timestamp",
       render: (value: string) => moment(value).format("YYYY/MM/DD HH:mm:ss"),
-      columnWidth: "30rem",
     },
   ];
   return (

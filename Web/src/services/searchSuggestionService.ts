@@ -1,18 +1,17 @@
-import {
-  AxiosResponse,
-  default as axios
-} from 'axios';
+import { BaseAuthAxiosService } from './baseAuthAxiosService';
+
 import { get, map, result, trim } from 'lodash';
 import { jsonp } from 'src/commonLibary/utils';
 import { SearchProvider } from 'src/Pages/Homepage/SearchProviderTag';
 import { IHistoryInfo, IPagination } from './syncManagerService';
+import { AxiosResponse } from 'axios';
 export interface SearchSuggestListItemMode {
   title: string;
   url?: string;
   iconURL?: string;
   type: "suggest" | "history";
 }
-class SearchSuggestionService {
+class SearchSuggestionService extends BaseAuthAxiosService {
   async getSuggestion(searchProvider: SearchProvider, keyword: string) {
     keyword = trim(keyword);
     if (keyword == "") {
@@ -49,8 +48,7 @@ class SearchSuggestionService {
     }
   }
   async getHistorySearchSuggestion(keyword?: string) {
-    return axios.get<any, AxiosResponse<Array<IHistoryInfo>>>(`${window.syncManagerConfig?.dataServerUrl ?? ""
-      }/api/Suggestion`, {
+    return this.axiosClient.get<any, AxiosResponse<Array<IHistoryInfo>>>(`/api/Suggestion`, {
       params: {
         maxSize: 10,
         keyword: trim(keyword)
@@ -67,7 +65,6 @@ class SearchSuggestionService {
 
   async getGoogleSuggestion(keyword: string) {
     return jsonp(`https://suggestqueries.google.com/complete/search?client=gws-wiz&q=${keyword}&jsonp=window.google_sug`, "google_sug", "google_sug").then(data => {
-      console.log(data);
       let results = get(data, "[0]");
       if (results && results.length > 0) {
         let suggestions = map(results, item => ({
@@ -81,7 +78,7 @@ class SearchSuggestionService {
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
-    },rej=>[{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
+    }, rej => [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
   }
   async getBaiduSuggestion(keyword: string) {
     return jsonp(`https://suggestion.baidu.com/su?wd=${keyword}&cb=window.baidu_sug`, "baidu_sug", "baidu_sug").then(data => {
@@ -94,11 +91,11 @@ class SearchSuggestionService {
         if (suggestions[0].title != keyword) {
           suggestions = [{ title: keyword, type: "suggest" }, ...suggestions];
         }
-        return  suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
+        return suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
-    },rej=>[{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
+    }, rej => [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
   }
 
   async getBingSuggestion(keyword: string) {
@@ -112,11 +109,11 @@ class SearchSuggestionService {
         if (suggestions[0].title != keyword) {
           suggestions = [{ title: keyword, type: "suggest" }, ...suggestions];
         }
-        return  suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
+        return suggestions.filter((item, idx) => idx == 0 || item.title != keyword);
       } else {
         return [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>
       }
-    },rej=>[{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
+    }, rej => [{ title: keyword, type: "suggest" }] as Array<SearchSuggestListItemMode>)
   }
 
 }

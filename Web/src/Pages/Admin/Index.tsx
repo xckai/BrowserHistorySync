@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   HistoryOutlined,
   FilterOutlined,
-  UploadOutlined,
+  LogoutOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
 import logo from "src/assets/icon128.png";
@@ -19,6 +20,7 @@ import {
   useResolvedPath,
 } from "react-router-dom";
 import AdminBreadcrumb from "./AdminBreadcrumb";
+import { baseAuthAxiosService } from "src/services/baseAuthAxiosService";
 const { Header, Sider, Content } = Layout;
 const StyledLayout = styled(Layout)`
   height: 100vh;
@@ -61,6 +63,23 @@ const StyledLayout = styled(Layout)`
     .header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      .left{
+          display: flex;
+          align-items: center;
+      }
+      .right{
+        margin-right:1rem;
+        button{
+          margin:0 .3rem;
+        }
+        .logout{
+          &:hover{
+            color:red;
+            border-color:red;
+          }
+        }
+      }
     }
   }
 `;
@@ -112,14 +131,19 @@ export default function Admin() {
           className="site-layout-background header"
           style={{ padding: 0 }}
         >
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
-          <AdminBreadcrumb></AdminBreadcrumb>
+          <div className="left">
+            {React.createElement(
+              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+              {
+                className: "trigger",
+                onClick: () => setCollapsed(!collapsed),
+              }
+            )}
+            <AdminBreadcrumb></AdminBreadcrumb></div>
+          <div className="right">
+            <Button icon={<HomeOutlined />} shape="circle"></Button>
+            <Button className="logout" icon={<LogoutOutlined />} onClick={baseAuthAxiosService.logout} shape="circle"></Button>
+          </div>
         </Header>
         <Content
           className="site-layout-background"
