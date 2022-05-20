@@ -17,7 +17,7 @@ import {
   syncManagerService,
 } from "src/services/syncManagerService";
 import moment from "moment";
-import _ from "lodash";
+import { groupBy, map } from "lodash";
 import styled from "styled-components";
 
 interface IHistoryInfoGroup {
@@ -233,16 +233,14 @@ export function SearchListGroup(props: {
     }
   }, []);
   function List2Groups(list: Array<IHistoryInfo>) {
-    return _(list)
-      .groupBy((item) => moment(item.timestamp).format("YYYY-MM-DD A"))
-      .map(
-        (g) =>
-          ({
-            groupTitle: moment(g[0].timestamp).format("YYYY-MM-DD A"),
-            items: g,
-          } as IHistoryInfoGroup)
-      )
-      .value();
+    return map(
+      groupBy(list, (item) => moment(item.timestamp).format("YYYY-MM-DD A")),
+      (g) =>
+        ({
+          groupTitle: moment(g[0].timestamp).format("YYYY-MM-DD A"),
+          items: g,
+        } as IHistoryInfoGroup)
+    );
   }
   function loadMoreData() {
     if (loading) {
