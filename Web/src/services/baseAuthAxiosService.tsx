@@ -6,9 +6,14 @@ import {
   AxiosError,
   default as axios
 } from 'axios';
-axios.defaults.baseURL = window.syncManagerConfig?.dataServerUrl ?? "";
+declare const ENV: string;
+let endpoint = "";
+window.syncManagerConfig.env = ENV;
+if (window.syncManagerConfig?.endpoints) {
+  endpoint = window.syncManagerConfig?.endpoints[ENV];
+}
+axios.defaults.baseURL = endpoint ?? "";
 axios.defaults.withCredentials = true;
-
 let loginModalIsVisable = false;
 let password = "";
 const inputValueRef = createRef<any>();
@@ -28,6 +33,8 @@ axios.interceptors.response.use(resp => resp, (error: AxiosError<any>) => {
           title: "授权失败，请重新登录",
           okText: "登录",
           closable: false,
+          keyboard: false,
+          centered: true,
           cancelButtonProps: { hidden: true },
           onCancel: () => { window.location.reload() },
           content: (
@@ -58,12 +65,13 @@ axios.interceptors.response.use(resp => resp, (error: AxiosError<any>) => {
         return Promise.reject(error);
       }
       default: {
-        message.error(resp?.data ?? error.message);
+        message.error(error.message);
         return Promise.reject(error);
       }
     }
   }
-  message.error(resp?.data ?? error.message);
+
+  message.error(error.message);
   return Promise.reject(error);
 });
 export class BaseAuthAxiosService {
@@ -74,6 +82,7 @@ export class BaseAuthAxiosService {
   logout() {
     return axios.post("api/Auth/logout").then(res => {
       message.info("成功登出，您可以关闭该页面");
+      setTimeout(window.close, 2000)
     })
   }
 }

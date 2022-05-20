@@ -1,4 +1,4 @@
-import { Input, List, Spin } from "antd";
+import { Button, Input, List, Spin } from "antd";
 import React, {
   ChangeEventHandler,
   PureComponent,
@@ -21,6 +21,7 @@ import {
 import { Logo } from "../../Components/Logo";
 import { SearchList, SearchListItem } from "./Components/SearchList";
 import { SearchListGroup } from "../../Components/SearchListGroup";
+import { SettingFilled } from "@ant-design/icons";
 export default function Page1() {
   const [isInit, setIsInit] = useState(false);
   const resizeObserver = useMemo(
@@ -30,7 +31,7 @@ export default function Page1() {
           sendCommandMsg({
             type: "ResizeWindow",
             height: entires[0].contentRect.height,
-            width: entires[0].contentRect.width,
+            width: undefined,
           });
         }
       }),
@@ -39,20 +40,6 @@ export default function Page1() {
   const onRefChanged = useCallback((node: HTMLElement) => {
     if (node != null) {
       resizeObserver.observe(node);
-    }
-  }, []);
-  useEffect(() => {
-    if (isInExtension()) {
-      listenToParentMsg("SetConfig", (msg) => {
-        window.syncManagerConfig = msg.syncManagerConfig;
-        setIsInit(false);
-      });
-      sendCommandMsg({ type: "GetConfig" });
-    } else {
-      window.syncManagerConfig = {
-        dataServerUrl: "",
-      };
-      setIsInit(false);
     }
   }, []);
   function onClickItem(data: IHistoryInfo) {
@@ -73,12 +60,12 @@ export default function Page1() {
         <Logo />
       </div>
       {!isInit && <SearchListGroup
-          css={`
+        css={`
             max-height: 500px;
           `}
-          onClickItem={onClickItem}
-          pageSize={15}
-        />}
+        onClickItem={onClickItem}
+        pageSize={15}
+      />}
     </section>
   );
 }

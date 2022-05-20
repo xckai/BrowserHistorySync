@@ -46,10 +46,14 @@ async function init() {
                         break;
                     }
                     case "ResizeWindow": {
-                        iframe.style.height = msg.height + "px";
-                        iframe.style.width = msg.width + "px";
-                        document.getElementById("main-body").style.height = msg.height + "px";
-                        document.getElementById("main-body").style.width = msg.width + "px";
+                        if (msg.height != undefined) {
+                            iframe.style.height = msg.height + "px";
+                            document.getElementById("main-body").style.height = msg.height + "px";
+                        }
+                        if (msg.width != undefined) {
+                            iframe.style.width = msg.width + "px";
+                            document.getElementById("main-body").style.width = msg.width + "px";
+                        }
                         break;
                     }
                     default:

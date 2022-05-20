@@ -19,7 +19,7 @@ public class FilterRuleController : Controller
     }
    
     [HttpGet("Query")]
-    public async Task<Pagination<ExcludeRule>> Query(string keyword = "", int pageSize = 10, int pageIndex = 1)
+    public async Task<Pagination<ExcludeRule>> Query(string? keyword = "", int pageSize = 10, int pageIndex = 1)
     {
         return await _ruleService.Query(keyword, pageSize, pageIndex);
     }

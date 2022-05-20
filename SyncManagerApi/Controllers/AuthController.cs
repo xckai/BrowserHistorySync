@@ -14,12 +14,14 @@ public class AuthController : Controller
 
     }
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromForm] string secret)
+    public async Task<IActionResult> Login([FromForm] string? secret)
     {
+        secret ??= "";
         var systemSecret = Environment.GetEnvironmentVariable("AuthSecret") ??
                            _configuration.GetValue<string>("AuthSecret") ?? "";
         if (!systemSecret.Equals(secret))
         {
+            return StatusCode(400, "Password is incorrect!");
             return BadRequest("Password is incorrect!");
         }
         

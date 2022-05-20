@@ -1,9 +1,11 @@
 declare interface Window {
     syncManagerConfig: SyncManagerConfig
+
 }
+
 interface SyncManagerConfig {
-    dataServerUrl?: string,
-    fontendUrl?: string,
+    endpoints: Record<string, string>
+    env: string
 }
 
 declare module '*.avif' {

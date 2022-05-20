@@ -13,6 +13,7 @@ import logo from "src/assets/icon128.png";
 import BrowserHistoryManager from "./BrowserHistoryManager";
 import FilterRuleManager from "./FilterRuleManager";
 import {
+  Link,
   Route,
   Routes,
   useLocation,
@@ -141,7 +142,7 @@ export default function Admin() {
             )}
             <AdminBreadcrumb></AdminBreadcrumb></div>
           <div className="right">
-            <Button icon={<HomeOutlined />} shape="circle"></Button>
+            <Link to={"/"}><Button className="home" icon={<HomeOutlined />} shape="circle"></Button></Link>
             <Button className="logout" icon={<LogoutOutlined />} onClick={baseAuthAxiosService.logout} shape="circle"></Button>
           </div>
         </Header>
