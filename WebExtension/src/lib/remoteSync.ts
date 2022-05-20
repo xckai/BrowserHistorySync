@@ -1,4 +1,4 @@
-import { UrlInfo } from "background";
+import { setIcon, UrlInfo } from "background";
 
 let sendingMessageQueue: Array<UrlInfo> = [];
 let browserType = "Chrome";
@@ -18,22 +18,15 @@ async function post(url = '', data = {}) {
     },
     body: JSON.stringify(data)
   }).then(res => {
-    if (res.ok && showErrorIndicator) {
+    if (res.ok) {
       //reset icon to defalut
-      (browser.action ?? browser.browserAction).setIcon({ path: "/128.png" });
-      showErrorIndicator = false;
-    } else if (!res.ok && !showErrorIndicator) {
-      // set icon to warning ;
-      (browser.action ?? browser.browserAction).setIcon({ path: "/icon_warning.png" });
-      showErrorIndicator = true;
+      setIcon('normal')
+    } else {
+      setIcon("warning")
     }
   }).catch(err => {
     console.error(err);
-    if (!showErrorIndicator) {
-      // set icon to warning ;
-      (browser.action ?? browser.browserAction).setIcon({ path: "/icon_warning.png" });
-      showErrorIndicator = true;
-    }
+    setIcon("warning")
   })
   return;
 }

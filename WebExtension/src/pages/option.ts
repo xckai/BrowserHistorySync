@@ -26,7 +26,8 @@ function onSave() {
             if (!resp.ok) {
                 resp.text().then(str => str ? alert(str) : alert("Response status code: " + resp.status)).catch(err => alert("Response status code: " + resp.status))
             } else {
-                window.close();
+                browser.runtime.sendMessage({ type: 'normal', action: "setIcon" })
+                setTimeout(window.close, 500);
             }
         }).catch(err => { console.log(err); alert("Network error!") })
     }).catch(e => { console.error(e); alert("Save to storage error!"); })
