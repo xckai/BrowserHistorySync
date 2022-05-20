@@ -28,6 +28,9 @@ module.exports = {
     }),
     new ForkTsCheckerWebpackPlugin(),
     new WebpackManifestPlugin(),
+    new webpack.DefinePlugin({
+      'ENV': JSON.stringify(process.env.ENV || 'prod')
+    }),
   ],
   module: {
     rules: [

@@ -43,6 +43,7 @@ export default function FilterRuleManager() {
       })
       .catch((e) => {
         console.error(e);
+        console.log(e.response);
         message.error(e.message);
         setLoading(false);
       })

@@ -33,7 +33,7 @@ const StyledSearchInput = styled.div`
     z-index: 2;
     padding: 0.3rem;
     width: 2rem;
-    height: 1.4rem;
+    height: 2rem;
   }
   .search_tag {
     position: absolute;
@@ -46,7 +46,7 @@ const StyledSearchInput = styled.div`
     padding: 0.3rem;
     right: 0;
     width: 1.5rem;
-    height: 1.2rem;
+    height: 1.5rem;
     top: 0.2rem;
     opacity: 0.5;
     visibility: hidden;

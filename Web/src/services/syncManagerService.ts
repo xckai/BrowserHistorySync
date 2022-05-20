@@ -1,7 +1,6 @@
-import {
-  AxiosResponse,
-  default as axios
-} from 'axios';
+import { AxiosResponse } from 'axios';
+import { BaseAuthAxiosService } from './baseAuthAxiosService';
+
 
 export interface IPagination<T> {
   current: number;
@@ -24,15 +23,15 @@ export interface SearchParams {
   datetimeTo?: moment.Moment;
   equipmentName?: string;
   pageIndex?: number;
-  pageSize?:number
+  pageSize?: number
 }
-class SyncManagerService {
+class SyncManagerService extends BaseAuthAxiosService {
   async queryHistoryList(
     searchParam?: SearchParams
   ) {
-    console.log(searchParam,"searchParam")
-    return axios.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(
-      `${window.syncManagerConfig?.dataServerUrl ?? ""}/api/UrlHistory/Query`,
+    console.log(searchParam, "searchParam")
+    return this.axiosClient.get<any, AxiosResponse<IPagination<IHistoryInfo>>>(
+      `/api/UrlHistory/Query`,
       {
         params: {
           pageIndex: searchParam.pageIndex ?? 1,
@@ -46,15 +45,15 @@ class SyncManagerService {
     );
   }
   async deleteHistoryItem(id: number) {
-    return axios.delete(
-      `${window.syncManagerConfig?.dataServerUrl ?? ""}/api/UrlHistory?id=${id}`
+    return this.axiosClient.delete(
+      `/api/UrlHistory?id=${id}`
     );
   }
-   async batchDeleteHistoryItem(ids: Array<number>) {
-    return axios.delete(
-      `${window.syncManagerConfig?.dataServerUrl ?? ""}/api/UrlHistory/BatchDelete`, {
-        data: ids
-      }
+  async batchDeleteHistoryItem(ids: Array<number>) {
+    return this.axiosClient.delete(
+      `/api/UrlHistory/BatchDelete`, {
+      data: ids
+    }
     );
   }
 }

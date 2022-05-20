@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SyncManagerApi.Interface;
 using SyncManagerApi.Models;
@@ -7,6 +8,7 @@ using SyncManagerApi.Models.DB;
 namespace SyncManagerApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class FilterRuleController : Controller
 {
     private IHistoryFilterRuleService _ruleService;
@@ -15,6 +17,7 @@ public class FilterRuleController : Controller
     {
         _ruleService = ruleService;
     }
+   
     [HttpGet("Query")]
     public async Task<Pagination<ExcludeRule>> Query(string? keyword = "", int pageSize = 10, int pageIndex = 1)
     {
@@ -30,12 +33,12 @@ public class FilterRuleController : Controller
     public async Task<ActionResult> Delete(int ruleId)
     {
         await _ruleService.DeleteRule(ruleId);
-        return StatusCode(201);
+        return Ok();
     }
     [HttpPatch]
     public async Task<ActionResult> Update([FromBody] ExcludeRule rule)
     {
         await _ruleService.UpdateRule(rule);
-        return StatusCode(200);
+        return Ok();
     }
 }

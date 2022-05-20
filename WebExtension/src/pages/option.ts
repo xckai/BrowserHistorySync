@@ -1,21 +1,41 @@
+
 function onSave() {
     let dataServerUrlInputElement = <HTMLInputElement>document.getElementById("data_server_url_input");
-    let fontendServerUrlInputElement = <HTMLInputElement>document.getElementById("fontend_server_url_input");
     let equipmentNameInputElement = <HTMLInputElement>document.getElementById("equipment_name");
+    let password = <HTMLInputElement>document.getElementById("password");
+    if (!dataServerUrlInputElement.value) {
+        alert("Please input server url");
+        return;
+    }
+    if (!equipmentNameInputElement.value) {
+        alert("Please input equipment name");
+    }
+    let dataServerUrl = dataServerUrlInputElement.value.endsWith("/") ? dataServerUrlInputElement.value.substring(0, dataServerUrlInputElement.value.length - 1) : dataServerUrlInputElement.value
     browser.storage.local.set({
-        dataServerUrl: dataServerUrlInputElement.value,
-        fontendServerUrl: fontendServerUrlInputElement.value,
+        dataServerUrl: dataServerUrl,
+        fontendServerUrl: dataServerUrl,
         equipmentName: equipmentNameInputElement.value
     }).then(() => {
-        window.close();
-    }).catch(e => console.error(e))
+        fetch(dataServerUrl + "/api/Auth/login", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `secret=${password.value}`
+        }).then(resp => {
+            if (!resp.ok) {
+                resp.text().then(str => str ? alert(str) : alert("Response status code: " + resp.status)).catch(err => alert("Response status code: " + resp.status))
+            } else {
+                window.close();
+            }
+        }).catch(err => { console.log(err); alert("Network error!") })
+    }).catch(e => { console.error(e); alert("Save to storage error!"); })
+
 
 }
 browser.storage.local.get(["dataServerUrl", "equipmentName", "fontendServerUrl"]).then(res => {
     let dataServerUrlInputElement = <HTMLInputElement>document.getElementById("data_server_url_input");
     dataServerUrlInputElement.value = res["dataServerUrl"] ?? "https://";
-    let fontendServerUrlInputElement = <HTMLInputElement>document.getElementById("fontend_server_url_input");
-    fontendServerUrlInputElement.value = res["fontendServerUrl"] ?? "https://";
     let equipmentNameInputElement = <HTMLInputElement>document.getElementById("equipment_name");
     if (res["equipmentName"]) {
         equipmentNameInputElement.value = res["equipmentName"]

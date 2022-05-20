@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "start": "cross-env BROWSERSLIST_ENV=dev webpack serve --open --config ./scripts/webpack.dev.js",
+    "start": "cross-env ENV=dev BROWSERSLIST_ENV=dev webpack serve --open --config ./scripts/webpack.dev.js",
     "build": "cross-env BROWSERSLIST_ENV=production webpack --config ./scripts/webpack.prod.js"
   },
   "repository": {
