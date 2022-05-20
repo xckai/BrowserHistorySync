@@ -85,7 +85,13 @@ export default function SearchBoxSuggestList(props: {
   onClick: (item: SearchSuggestListItem) => void;
 }) {
   return (
-    <div>
+    <div
+      className="search_box_suggest_list"
+      css={`
+        overflow: auto;
+        max-height: 70vh;
+      `}
+    >
       {props.listData.length > 0 && <StyledDivider />}
       {props.listData.map((item, idx) => (
         <SearchListItem

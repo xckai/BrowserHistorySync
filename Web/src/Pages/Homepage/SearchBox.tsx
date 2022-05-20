@@ -18,25 +18,26 @@ import {
 import { SearchBoxInput } from "./SearchBoxInput";
 import { trim } from "lodash";
 
-const SearchBoxContainer = styled.section<{ inputForced: boolean }>`
-  width: ${(props) => (props.inputForced ? "90%" : "20rem")};
-  transition: width 0.5s;
+const SearchBoxContainer = styled.section`
+  width: 20rem;
+  transition: width 0.5s, margin-top 0.3s;
   padding: 0.6rem 0px;
   position: relative;
   background: #fff;
-  opacity: ${(props) => (props.inputForced ? 1 : 0.6)};
+  opacity: 0.6;
   z-index: 2;
   border: #d9d9d9 1px solid;
-  border-color: ${(props: any) => (props.inputForced ? "#97d0ff " : "#d9d9d9")};
-  box-shadow: ${(props) => (props.inputForced ? "0 0 0 2px #188fff16" : " ")};
+  border-color: #d9d9d9;
+  box-shadow: none;
   border-radius: 10px;
+  &.forced {
+    width: 90%;
+    opacity: 1;
+    border-color: #97d0ff;
+    box-shadow: 0 0 0 2px #188fff16;
+  }
 `;
 
-const Divider = styled.div`
-  margin: 5px;
-  height: 1px;
-  background-color: #d9d9d9;
-`;
 const StyledBackgroundLayer = styled.div<{ inputForced: boolean }>`
   position: fixed;
   left: 0;
@@ -199,7 +200,9 @@ export default function SearchBox(props: {
           setInputForced(false);
         }}
       />
-      <SearchBoxContainer inputForced={inputForced} className={props.className}>
+      <SearchBoxContainer
+        className={props.className + (inputForced ? " forced" : "")}
+      >
         <SearchBoxInput
           onFocus={onForce}
           isForcused={inputForced}
