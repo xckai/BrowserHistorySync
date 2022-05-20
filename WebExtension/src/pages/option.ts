@@ -23,10 +23,8 @@ function onSave() {
             },
             body: `secret=${password.value}`
         }).then(resp => {
-            console.log(resp)
             if (!resp.ok) {
-                console.log(resp)
-                resp.text().then(str => alert(str)).catch(err => alert(resp.statusText))
+                resp.text().then(str => str ? alert(str) : alert("Response status code: " + resp.status)).catch(err => alert("Response status code: " + resp.status))
             } else {
                 window.close();
             }
