@@ -51,18 +51,15 @@ const StyledSection = styled.section`
       max-width: 80%;
       margin: 15vh auto;
       &.forced {
-        margin-top: 1vh;
+        margin-top: .5rem;
       }
       .search_box_suggest_list {
         max-height: calc(95vh - 6rem);
       }
     }
-    .ios {
-      &.forced {
-        margin-top: 0.5rem;
-      }
+    .ios_view {
       .search_box_suggest_list {
-        max-height: calc(40vh - 6rem);
+        max-height: calc(40vh - 80px);
       }
     }
   }
@@ -74,6 +71,7 @@ const StyledSection = styled.section`
 `;
 export default function Homepage() {
   const isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+  const isFirefox = navigator.userAgent.indexOf("FxiOS") > -1;
   return (
     <StyledSection>
       <div className="btn_group">
@@ -100,7 +98,7 @@ export default function Homepage() {
       </div>
       <WallPaper></WallPaper>
       <SearchBox
-        className={isIOS ? "ios search_box" : "search_box"}
+        className={isIOS  && !isFirefox ? "ios_view search_box" : "search_box"}
       ></SearchBox>
     </StyledSection>
   );

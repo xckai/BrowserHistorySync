@@ -15,7 +15,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("default", policyBuilder =>
     {
-        policyBuilder.AllowCredentials().AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:9000");
+        policyBuilder.AllowCredentials().AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowedToAllowWildcardSubdomains().WithOrigins("http://localhost:9000")
+            .WithOrigins("http://*.local.me:9000");
     });
 });
 builder.Services.AddControllers().AddNewtonsoftJson().AddJsonOptions(options =>
@@ -28,7 +29,8 @@ builder.Services.AddAuthentication(options=>options.DefaultScheme ="Cookies")
     .AddCookie("Cookies", options =>
     {
         options.Cookie.Name = "browser_history_sync_manager_auth";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.ExpireTimeSpan = TimeSpan.FromDays(3);
+        options.Cookie.MaxAge = TimeSpan.FromDays(3);
         options.SlidingExpiration = true;
         options.Events = new CookieAuthenticationEvents
         {                          

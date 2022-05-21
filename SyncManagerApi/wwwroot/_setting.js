@@ -1,1 +1,1 @@
-window.syncManagerConfig={endpoints:{prod:"",dev:"http://localhost:5266"},env:"prod"};
+window.syncManagerConfig={endpoints:{prod:"",dev:"http://mac.local.me:5266"},env:"prod"};
