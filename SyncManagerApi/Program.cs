@@ -50,7 +50,9 @@ builder.Services.AddScoped<IHistoryFilterRuleService, HistoryFilterRuleService>(
 builder.Services.AddScoped<ISuggestionService, SuggestionService>();
 
 
+
 builder.Services.AddDbContext<BrowserHistoryContext>(dbBuilder=>dbBuilder.UseNpgsql(builder.Configuration.GetConnectionString("pgsql")));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -66,6 +68,15 @@ builder.Services.AddResponseCompression(options =>
 builder.WebHost.UseKestrel();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetService<BrowserHistoryContext>();
+    if (dbContext != null)
+    {   
+        await dbContext.Database.MigrateAsync();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
