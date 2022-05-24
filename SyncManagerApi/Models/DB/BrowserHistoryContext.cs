@@ -26,14 +26,16 @@ public class BrowserHistoryContext : DbContext
         modelBuilder.Entity<BrowserHistory>(entity =>
         {
             entity.ToTable("browser_history");
-            
+            entity.HasKey(item => item.Id);
+            entity.HasIndex(item => item.Timestamp);
+
         });
         modelBuilder.Entity<ExcludeRule>(entity =>
         {
             entity.ToTable("exclude_rule");
+            entity.HasKey(e => e.Id);
             entity.Property(e => e.RuleType).HasConversion<string>();
         });
-
         OnModelCreatingPartial(modelBuilder);
     }
 

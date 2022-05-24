@@ -1,7 +1,7 @@
 window.syncManagerConfig = {
   endpoints: {
-    'prod': "",
-    "dev": "http://mac.local.me:5266"
+    prod: "",
+    dev: "http://localhost:5266",
   },
-  env: "prod"
-}
+  env: "prod",
+};

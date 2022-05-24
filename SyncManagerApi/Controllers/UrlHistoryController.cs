@@ -4,6 +4,9 @@ using SyncManagerApi.Models;
 using SyncManagerApi.Models.DB;
 using SyncManagerApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using SyncManagerApi.Models.RequestDto;
+using SyncManagerApi.Models.ResponseDto;
+
 namespace SyncManagerApi.Controllers
 {
     [Route("api/[controller]")]
@@ -37,12 +40,12 @@ namespace SyncManagerApi.Controllers
             return Ok();
         }
         [HttpGet("QueryUrlHistory")]
-        public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
+        public async Task<Pagination<HistoryItemDto>> QueryUrlHistory(string? keyword="",int pageSize =10, int pageIndex =1)
         {
             return await _browserHistoryService.Query(keyword ?? "", pageSize, pageIndex);
         }
         [HttpGet("Query")]
-        public async Task<Pagination<BrowserHistory>> QueryUrlHistory(string? keyword,string? equipments, DateTimeOffset? dateFrom, DateTimeOffset? DateTo, int pageSize =10, int pageIndex =1)
+        public async Task<Pagination<HistoryItemDto>> QueryUrlHistory(string? keyword,string? equipments, DateTimeOffset? dateFrom, DateTimeOffset? DateTo, int pageSize =10, int pageIndex =1)
         {
             
             return await _browserHistoryService.Query(new QueryParams()

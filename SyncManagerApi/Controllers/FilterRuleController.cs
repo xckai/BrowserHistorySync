@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SyncManagerApi.Interface;
 using SyncManagerApi.Models;
 using SyncManagerApi.Models.DB;
+using SyncManagerApi.Models.ResponseDto;
 
 namespace SyncManagerApi.Controllers;
 [Route("api/[controller]")]

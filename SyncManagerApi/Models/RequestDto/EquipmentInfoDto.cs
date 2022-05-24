@@ -1,6 +1,6 @@
-namespace SyncManagerApi.Models;
+namespace SyncManagerApi.Models.RequestDto;
 
-public record EquipmentInfo
+public record EquipmentInfoDto
 {
     public string EquipmentName { get; set; }
     public string BrowserType { get; set; }
