@@ -32,7 +32,7 @@ public static  class WebApplicationBuilderExtension
     }
     public static void ConfigDbContext(this WebApplicationBuilder builder)
     {
-        var dbType = builder.Configuration.GetValue<string>("DBType") ?? "".ToLower();
+        var dbType = (builder.Configuration.GetValue<string>("DBType") ?? "").ToLower();
         var dbConnectionStr = builder.Configuration.GetValue<string>("DBConnectionStr");
         if (dbType == "postgresql")
             builder.Services.AddDbContext<BrowserHistoryContext>(dbBuilder => dbBuilder.UseNpgsql(dbConnectionStr));
