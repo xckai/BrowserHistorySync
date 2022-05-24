@@ -26,7 +26,7 @@ public class SuggestionService : ISuggestionService
       
 
         var isNumAndEnch = @"^[a-z|A-Z|0-9|.]*$";
-        var targetDt = DateTime.UtcNow.Subtract(new TimeSpan(365, 0, 0, 0));
+        var targetDt = DateTimeOffset.UtcNow.Subtract(new TimeSpan(365, 0, 0, 0)).ToUnixTimeSeconds();
         IEnumerable<BrowserHistory> candidates = new List<BrowserHistory>();
         
         if (Regex.IsMatch(keyword, isNumAndEnch) && !StringHelper.IsUrlPrefix(keyword))

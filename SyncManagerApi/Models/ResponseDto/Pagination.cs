@@ -1,6 +1,4 @@
-using SyncManagerApi.Models.DB;
-
-namespace SyncManagerApi.Models;
+namespace SyncManagerApi.Models.ResponseDto;
 
 public class Pagination<T>
 {

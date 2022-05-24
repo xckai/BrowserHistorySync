@@ -17,11 +17,9 @@ public class AuthController : Controller
     public async Task<IActionResult> Login([FromForm] string? secret)
     {
         secret ??= "";
-        var systemSecret = Environment.GetEnvironmentVariable("AuthSecret") ??
-                           _configuration.GetValue<string>("AuthSecret") ?? "";
+        var systemSecret = _configuration.GetValue<string>("AuthSecret") ?? "";
         if (!systemSecret.Equals(secret))
         {
-            return StatusCode(400, "Password is incorrect!");
             return BadRequest("Password is incorrect!");
         }
         
@@ -41,7 +39,7 @@ public class AuthController : Controller
     {
         var claimsIdentity = new ClaimsIdentity(new[]
         {
-            new Claim(ClaimTypes.Name, "user"),
+            new Claim(ClaimTypes.Name, "normal_user"),
             new Claim(ClaimTypes.Role, "user"),
             //...
         }, "Cookies");

@@ -1,8 +1,10 @@
-using System.Text.RegularExpressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SyncManagerApi.Interface;
 using SyncManagerApi.Models;
 using SyncManagerApi.Models.DB;
+using SyncManagerApi.Models.RequestDto;
+using SyncManagerApi.Models.ResponseDto;
 using SyncManagerApi.Utils;
 
 namespace SyncManagerApi.Services;
@@ -11,69 +13,61 @@ public class BrowserHistoryService : IBrowserHistoryService
 {
     private readonly BrowserHistoryContext _db;
     private readonly IHistoryFilterRuleService _ruleService;
-
-    public BrowserHistoryService(BrowserHistoryContext db, IHistoryFilterRuleService ruleService)
+    private readonly IMapper _mapper;
+    public BrowserHistoryService(BrowserHistoryContext db, IHistoryFilterRuleService ruleService,IMapper mapper)
     {
         _db = db;
         _ruleService = ruleService;
+        _mapper = mapper;
     }
 
 
-    public async Task BatchSync(IList<HistoryDto>? historieDtos, EquipmentInfo equipmentInfo)
+    public async Task BatchSync(IList<HistorySyncItemDto>? historieDtos, EquipmentInfoDto equipmentInfoDto)
     {
         if (historieDtos != null)
         {
-            var rules = await _db.ExcludeRules.ToListAsync(); historieDtos = historieDtos
-                .Where((dto) => !_ruleService.IsMatchExcludeRule(dto.Url).GetAwaiter().GetResult()).ToList();
+            var rules = await _db.ExcludeRules.ToListAsync();
+            historieDtos = historieDtos
+                .Where(dto => !_ruleService.IsMatchExcludeRule(dto.Url).GetAwaiter().GetResult()).ToList();
             if (historieDtos.Count > 0)
             {
                 var toBeUpdate = new List<BrowserHistory>();
                 var toBeInsert = new List<BrowserHistory>();
                 foreach (var historyDto in historieDtos)
                 {
-                    var targetDt = DateTime.UtcNow.Subtract(new TimeSpan(0, 24, 0, 0));
+                    var targetDt = DateTimeOffset.UtcNow.Subtract(new TimeSpan(0, 24, 0, 0)).ToUnixTimeSeconds();
                     var recordedItem = await _db.UrlHistories.Where(savedItem =>
-                            savedItem.Url == historyDto.Url && equipmentInfo.EquipmentName == savedItem.EquipmentName
-                                                            && savedItem.Timestamp >= targetDt)
+                            equipmentInfoDto != null && savedItem.Url == historyDto.Url &&
+                            equipmentInfoDto.EquipmentName == savedItem.EquipmentName && savedItem.Timestamp >= targetDt)
                         .FirstOrDefaultAsync();
                     if (recordedItem != null)
-                    {
-                        toBeUpdate.Add(new BrowserHistory()
+                        toBeUpdate.Add(new BrowserHistory
                         {
                             Id = recordedItem.Id,
                             Url = historyDto.Url,
                             Title = historyDto.Title,
                             FaviconUrl = historyDto.FaviconUrl,
-                            EquipmentName = equipmentInfo?.EquipmentName,
-                            Timestamp = DateTime.UtcNow,
-                            BrowserType = equipmentInfo?.BrowserType,
+                            EquipmentName = equipmentInfoDto?.EquipmentName,
+                            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                            BrowserType = equipmentInfoDto?.BrowserType,
                             Referrer = historyDto.Referrer
                         });
-                    }
                     else
-                    {
-                        toBeInsert.Add(new BrowserHistory()
+                        toBeInsert.Add(new BrowserHistory
                         {
                             Url = historyDto.Url,
                             Title = historyDto.Title,
                             FaviconUrl = historyDto.FaviconUrl,
-                            EquipmentName = equipmentInfo?.EquipmentName,
-                            Timestamp = DateTime.UtcNow,
-                            BrowserType = equipmentInfo?.BrowserType,
+                            EquipmentName = equipmentInfoDto?.EquipmentName,
+                            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                            BrowserType = equipmentInfoDto?.BrowserType,
                             Referrer = historyDto.Referrer
                         });
-                    }
                 }
 
-                if (toBeInsert.Count > 0)
-                {
-                    await _db.UrlHistories.AddRangeAsync(toBeInsert);
-                }
+                if (toBeInsert.Count > 0) await _db.UrlHistories.AddRangeAsync(toBeInsert);
 
-                if (toBeUpdate.Count > 0)
-                {
-                    _db.UrlHistories.UpdateRange(toBeUpdate);
-                }
+                if (toBeUpdate.Count > 0) _db.UrlHistories.UpdateRange(toBeUpdate);
 
                 await _db.SaveChangesAsync();
             }
@@ -84,28 +78,22 @@ public class BrowserHistoryService : IBrowserHistoryService
     public async Task Delete(int id)
     {
         var toBeDeleted = await _db.UrlHistories.FirstOrDefaultAsync(history => history.Id == id);
-        if (toBeDeleted == null)
-        {
-            throw new HttpRequestException("No history record founded");
-        }
+        if (toBeDeleted == null) throw new HttpRequestException("No history record founded");
         _db.UrlHistories.Remove(toBeDeleted);
         await _db.SaveChangesAsync();
     }
 
     public async Task BatchDelete(IList<int> ids)
     {
-        var toBeDeleted =  _db.UrlHistories.Where(history => ids.Contains(history.Id));
-        if (toBeDeleted == null)
-        {
-            throw new HttpRequestException("No history records founded");
-        }
+        var toBeDeleted = _db.UrlHistories.Where(history => ids.Contains(history.Id));
+        if (toBeDeleted == null) throw new HttpRequestException("No history records founded");
 
 
         _db.UrlHistories.RemoveRange(toBeDeleted);
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Pagination<BrowserHistory>> Query(string keyword, int pageSize, int pageIndex)
+    public async Task<Pagination<HistoryItemDto>> Query(string keyword, int pageSize, int pageIndex)
     {
         var query = string.IsNullOrWhiteSpace(keyword)
             ? _db.UrlHistories
@@ -116,60 +104,53 @@ public class BrowserHistoryService : IBrowserHistoryService
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-        return new Pagination<BrowserHistory>()
+        return new Pagination<HistoryItemDto>
         {
             Current = pageIndex,
             Total = total,
             PageSize = pageSize,
-            Data = data
+            Data = _mapper.Map<List<HistoryItemDto>>(data)
         };
     }
 
-    public async Task<Pagination<BrowserHistory>> Query(QueryParams queryParams, int pageSize, int pageIndex)
+    public async Task<Pagination<HistoryItemDto>> Query(QueryParams queryParams, int pageSize, int pageIndex)
     {
         IQueryable<BrowserHistory> query = _db.UrlHistories;
-        
+
         if (queryParams.DateFrom != null)
         {
             queryParams.DateTo = queryParams.DateTo ?? DateTime.Now;
             query = query.Where(history =>
-                history.Timestamp >= queryParams.DateFrom &&
-                history.Timestamp <= queryParams.DateTo);
+                history.Timestamp >= queryParams.DateFrom.Value.ToUnixTimeSeconds() &&
+                history.Timestamp <= queryParams.DateTo.Value.ToUnixTimeSeconds());
         }
 
         if (!string.IsNullOrWhiteSpace(queryParams.Keyword))
         {
-            
             if (StringHelper.IsUrlPrefix(queryParams.Keyword))
-            {
                 query = query.Where(history =>
                     history.Title.Contains(queryParams.Keyword));
-            }
             else
-            {
                 query = query.Where(history =>
-                    (history.Title.Contains(queryParams.Keyword)
-                     || history.Url.Contains(queryParams.Keyword)));
-            }
+                    history.Title.Contains(queryParams.Keyword)
+                    || history.Url.Contains(queryParams.Keyword));
         }
 
         if (queryParams.Equipments != null && queryParams.Equipments.Count > 0)
-        {
             query = query.Where(history =>
                 queryParams.Equipments.Contains(history.EquipmentName));
-        }
 
         var total = query.Count();
         var data = await query.OrderByDescending(urlHistory => urlHistory.Timestamp)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-        return new Pagination<BrowserHistory>()
+        return new Pagination<HistoryItemDto>
         {
             Current = pageIndex,
             Total = total,
             PageSize = pageSize,
-            Data = data!
+            Data = _mapper.Map<List<HistoryItemDto>>(data)!
         };
     }
 }

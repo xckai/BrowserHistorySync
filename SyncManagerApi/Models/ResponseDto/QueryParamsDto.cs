@@ -1,4 +1,4 @@
-namespace SyncManagerApi.Models;
+namespace SyncManagerApi.Models.ResponseDto;
 
 public class QueryParams
 {

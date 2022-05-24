@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SyncManagerApi.Interface;
 using SyncManagerApi.Models;
 using SyncManagerApi.Models.DB;
+using SyncManagerApi.Models.ResponseDto;
 
 namespace SyncManagerApi.Services;
 

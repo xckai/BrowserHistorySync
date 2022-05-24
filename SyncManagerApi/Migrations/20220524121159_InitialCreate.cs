@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace SyncManagerApi.Migrations
 {
-    public partial class init : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,8 +17,9 @@ namespace SyncManagerApi.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Url = table.Column<string>(type: "text", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
-                    Timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    Timestamp = table.Column<long>(type: "bigint", nullable: false),
                     FaviconUrl = table.Column<string>(type: "text", nullable: true),
+                    Referrer = table.Column<string>(type: "text", nullable: true),
                     EquipmentName = table.Column<string>(type: "text", nullable: true),
                     BrowserType = table.Column<string>(type: "text", nullable: true)
                 },
@@ -41,6 +41,11 @@ namespace SyncManagerApi.Migrations
                 {
                     table.PrimaryKey("PK_exclude_rule", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_browser_history_Timestamp",
+                table: "browser_history",
+                column: "Timestamp");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
