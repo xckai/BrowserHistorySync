@@ -16,7 +16,7 @@ import {
   SearchSuggestListItemMode,
 } from "src/services/searchSuggestionService";
 import { SearchBoxInput } from "./SearchBoxInput";
-import { trim } from "lodash";
+import { last, trim } from "lodash";
 
 const SearchBoxContainer = styled.section`
   width: 20rem;
@@ -123,6 +123,10 @@ export default function SearchBox(props: {
         e.preventDefault();
         if (crtActivedItemIdx > 0) {
           setCrtActivedItemIdx(crtActivedItemIdx - 1);
+          let activedItem = suggestionList[crtActivedItemIdx - 1];
+          if (activedItem && activedItem.type != "history") {
+            setSearchValue(activedItem.title);
+          }
         }
       }
       return;
@@ -133,6 +137,34 @@ export default function SearchBox(props: {
         e.preventDefault();
         if (crtActivedItemIdx < suggestionList.length - 1) {
           setCrtActivedItemIdx(crtActivedItemIdx + 1);
+          let activedItem = suggestionList[crtActivedItemIdx + 1];
+          if (activedItem && activedItem.type != "history") {
+            setSearchValue(activedItem.title);
+          }
+        }
+      }
+      return;
+    }
+    if (e.key == "Home" || e.key == "PageUp") {
+      if (inputForced) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        setCrtActivedItemIdx(0);
+        let activedItem = suggestionList[0];
+        if (activedItem && activedItem.type != "history") {
+          setSearchValue(activedItem.title);
+        }
+      }
+      return;
+    }
+    if (e.key == "End" || e.key == "PageDown") {
+      if (inputForced) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        setCrtActivedItemIdx(suggestionList.length - 1);
+        let activedItem = last(suggestionList);
+        if (activedItem && activedItem.type != "history") {
+          setSearchValue(activedItem.title);
         }
       }
       return;

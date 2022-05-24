@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 import search from "../../assets/search.svg";
 import enter from "../../assets/enter.svg";
@@ -66,12 +66,27 @@ export function SearchBoxInput(props: {
       inputRef?.current?.focus();
     }
   }, [props.isForcused, props.currentSearchProvider]);
+  const getPlaceHolder = useMemo(() => {
+    switch (props.currentSearchProvider) {
+      case "Baidu":
+        return "百度搜索";
+      case "Bing":
+        return "必应搜索";
+      case "Google":
+        return "谷歌搜索";
+      case "BrowserHistory":
+        return "从历史记录中搜索";
+      default:
+        return "";
+    }
+  }, [props.currentSearchProvider]);
+
   return (
     <StyledSearchInput className={props.className}>
       <img className="search_icon" src={search} alt="" />
       <StyledInput
         className="search_input"
-        placeholder={`Search With ${props.currentSearchProvider}`}
+        placeholder={getPlaceHolder}
         value={props.searchValue}
         onChange={(e) => {
           props.onSearchValueChange(e.target.value);
