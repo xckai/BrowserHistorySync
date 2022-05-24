@@ -19,19 +19,17 @@ import styled from "styled-components";
 import locale from "antd/es/date-picker/locale/zh_CN";
 import { template } from "lodash";
 
-const StyledP = styled.p`
+const StyledSpan = styled.span`
   margin: 0;
   padding: 0;
-  max-width: 30rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
   img {
+    margin: auto;
     width: 1rem;
     height: 1rem;
     margin-right: 0.3rem;
+  }
+  a {
+    vertical-align: middle;
   }
 `;
 export default function BrowserHistoryManager() {
@@ -164,28 +162,32 @@ export default function BrowserHistoryManager() {
     {
       title: "Title",
       dataIndex: "title",
+      ellipsis: true,
       render: (value: string, history: IHistoryInfo) => (
-        <StyledP title={value}>
+        <StyledSpan title={value}>
           <img src={history.faviconUrl} alt="" />
           <a target="_blank" href={history.url}>
             {value}
           </a>
-        </StyledP>
+        </StyledSpan>
       ),
     },
     {
       title: "Url",
       dataIndex: "url",
-      render: (value: string) => <StyledP title={value}>{value}</StyledP>,
+      ellipsis: true,
+      render: (value: string) => value,
     },
     {
       title: "设备名称",
       dataIndex: "equipmentName",
+      width: 100,
       render: (value: string) => <span>{value}</span>,
     },
     {
       title: "访问时间",
       dataIndex: "timestamp",
+      width: 150,
       render: (value: string) => moment(value).format("YYYY/MM/DD HH:mm:ss"),
     },
   ];
