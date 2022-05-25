@@ -56,7 +56,8 @@
 ### SyncManagerApi
 
 Net6 C# WebAPI & WebHost;
-Docker 镜像 coming soon；
+
+[Docker 镜像](https://hub.docker.com/repository/docker/xckai123/browser-history-sync)
 
 运行环境变量设置：
 
@@ -89,3 +90,12 @@ Web 插件项目；
 - 编译：pnpm run build
 
 ## 怎么使用
+[Docker 镜像](https://hub.docker.com/repository/docker/xckai123/browser-history-sync)
+
+docker run  -p 9909:80 -e DBType="sqlite" -e DBConnectionStr="Data Source=Application.db;Cache=Shared" -e AuthSecret="123"  xckai123/browser-history-sync
+
+Chrome 扩展： 申请中；
+
+Edge 扩展：申请中；
+
+[Firefor扩展](https://addons.mozilla.org/zh-CN/firefox/addon/browserhistorysync/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
