@@ -12,9 +12,9 @@
 
 基于以上问题，自己写了个服务，配合 Web Extension 插件，实现了对个人浏览历史记录的自动保存、过滤、搜索功能；
 
-## Hight-level Architecture
+## High-level Architecture
 
-![Hight-level Architecture](./Assets/BrowserSync.jpg)
+![High-level Architecture](./Assets/BrowserSync.jpg)
 
 ### Webextension
 
