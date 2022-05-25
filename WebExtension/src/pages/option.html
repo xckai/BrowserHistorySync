@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <title>BrowserHistorySync Setting</title>
+
 </head>
 <style type="text/css">
     html {
@@ -17,37 +19,55 @@
         background-color: ghostwhite;
         height: 100%;
         width: 100%;
-        border-radius: 1rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+
+    }
+
+    form {
+        width: 80%;
+        max-width: 40rem;
+        min-width: 30rem;
     }
 </style>
 
 <body>
-    <section
-        style="height: 15rem; width: 40rem; padding: 1rem 2rem; display: flex; flex-direction: column;box-sizing: border-box;justify-content: center;">
-        <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
-            <div style="margin-left: .5rem; width: 8rem;">ServerURL：</div>
-            <input id="data_server_url_input" style="height: 1rem; flex:1" type="text" value="http://">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">BrowserHistorySync Setting</span>
         </div>
-        <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
-            <div style="margin-left: .5rem; width: 8rem;">Password</div>
-            <input id="password" style="height: 1rem; flex:1" type="password" value="">
-        </div>
-        <!-- <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
-            <div style="margin-left: .5rem; width: 8rem;">FontendServerURL：</div>
-            <input id="fontend_server_url_input" style="height: 1rem; flex:1" type="text" value="http://">
-        </div> -->
-        <div style="display: flex; height: 100%; width: 100%; justify-content: center;align-items: center;">
-            <div style="margin-left: .5rem;width: 8rem;">EquipmentName: </div>
-            <input id="equipment_name" style="height: 1rem; flex:1" type="text" value="">
-        </div>
-        <button id="save_button" style="align-self:flex-end; width: 4rem; margin: 1rem 0;">Save</button>
-    </section>
-
+    </nav>
+    <div class="container-lg" style="height: 90%;">
+        <section class="d-flex justify-content-center align-items-center" style="height: 100%;">
+            <form>
+                <div class="mb-3">
+                    <label for="data_server_url_input" class="form-label">服务器URL地址</label>
+                    <input type="text" class="form-control" id="data_server_url_input">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Secret (Password)</label>
+                    <input type="password" class="form-control" id="password">
+                </div>
+                <div class="mb-3">
+                    <label for="equipment_name" class="form-label">设备名称</label>
+                    <input type="text" class="form-control" id="equipment_name">
+                </div>
+                <div class="mb-3">
+                    <label for="delay_upload_time" class="form-label">延迟上报时间</label>
+                    <select id="delay_upload_time" class="form-select">
+                        <option value="15">15s</option>
+                        <option value="30" selected>30s</option>
+                        <option value="45">45s</option>
+                        <option value="60">60s</option>
+                    </select>
+                    <div class="form-text">新页面打开后，URL稳定不变后再上报访问记录</div>
+                </div>
+                <button id="save_button" class="btn btn-primary">Save</button>
+            </form>
+        </section>
+    </div>
 </body>
-<script src="common.js"></script>
+
+<script src="browser-polyfill.min.js"></script>
+<script src="bootstrap.bundle.min.js"></script>
 <script src="option.js"></script>
 
 </html>
