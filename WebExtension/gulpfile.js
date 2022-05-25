@@ -30,6 +30,18 @@ gulp.task("clear-dist", () => {
 function getBuildStream() {
   const staticFiles = gulp.src([
     path.resolve(__dirname, "./src/static/**/*.*"),
+    path.resolve(
+      __dirname,
+      "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ),
+    path.resolve(
+      __dirname,
+      "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+    ),
+    path.resolve(
+      __dirname,
+      "./node_modules/webextension-polyfill/dist/browser-polyfill.min.js"
+    ),
   ]);
   const commonFiles$ = gulp
     .src([
@@ -129,6 +141,7 @@ gulp.task(
               console.log(err.toString());
               this.emit("end");
             }).js;
+
           const popup$ = gulp
             .src([path.resolve(__dirname, "./src/pages/popup.ts")])
             .pipe(getTsProject({ module: "amd", outFile: "popup.js" }))
