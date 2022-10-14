@@ -36,13 +36,19 @@ export async function batchSyncWithRemoteServer(urlInfos: Array<UrlInfo>) {
   if (!dataServerUrl) {
     console.error("Remote server URL is null!")
   }
-
+  const filteredList =urlInfos.filter(urlInfo=>{
+    // remove data:image icon size >64kb
+    if(urlInfo.FaviconUrl?.length > 60000){
+      return false;
+    }
+    return true;
+  })
   await post(dataServerUrl + "/api/UrlHistory/BatchSync", {
     equipmentInfo: {
       equipmentName,
       browserType
     },
-    historyList: urlInfos
+    historyList: filteredList
   })
 }
 export async function SendToRemote(urlInfo: UrlInfo) {
