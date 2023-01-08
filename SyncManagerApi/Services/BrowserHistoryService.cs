@@ -41,17 +41,16 @@ public class BrowserHistoryService : IBrowserHistoryService
                             equipmentInfoDto.EquipmentName == savedItem.EquipmentName && savedItem.Timestamp >= targetDt)
                         .FirstOrDefaultAsync();
                     if (recordedItem != null)
-                        toBeUpdate.Add(new BrowserHistory
-                        {
-                            Id = recordedItem.Id,
-                            Url = historyDto.Url,
-                            Title = historyDto.Title,
-                            FaviconUrl = historyDto.FaviconUrl,
-                            EquipmentName = equipmentInfoDto?.EquipmentName,
-                            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                            BrowserType = equipmentInfoDto?.BrowserType,
-                            Referrer = historyDto.Referrer
-                        });
+                    {
+                        recordedItem.Url = historyDto.Url;
+                        recordedItem.Title = historyDto.Title;
+                        recordedItem.FaviconUrl = historyDto.FaviconUrl;
+                        recordedItem.EquipmentName = equipmentInfoDto?.EquipmentName;
+                        recordedItem.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                        recordedItem.Referrer = historyDto.Referrer;
+                        recordedItem.BrowserType = equipmentInfoDto?.BrowserType;
+                        toBeUpdate.Add(recordedItem);
+                    }
                     else
                         toBeInsert.Add(new BrowserHistory
                         {

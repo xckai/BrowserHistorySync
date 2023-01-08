@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 EXPOSE 80
 EXPOSE 443
 
-ENV DBType="Postgresql" AuthSecret="123456" \
+ENV DBType="Postgresql" AuthSecret="123" \
     DBConnectionStr=""
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS restore-all

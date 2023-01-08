@@ -5,9 +5,8 @@ const BundleAnalyzerPlugin =
 commonConfig.plugins.splice(
   0,
   0,
-  new CleanWebpackPlugin(),
-  new BundleAnalyzerPlugin()
-);
+  new CleanWebpackPlugin()
+  );
 
 module.exports = {
   ...commonConfig,

@@ -14,8 +14,8 @@ public static  class WebApplicationBuilderExtension
             .AddCookie("Cookies", options =>
             {
                 options.Cookie.Name = "browser_history_sync_manager_auth";
-                options.ExpireTimeSpan = TimeSpan.FromDays(3);
-                options.Cookie.MaxAge = TimeSpan.FromDays(3);
+                options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                options.Cookie.MaxAge = TimeSpan.FromDays(30);
                 options.SlidingExpiration = true;
                 options.Events = new CookieAuthenticationEvents
                 {
