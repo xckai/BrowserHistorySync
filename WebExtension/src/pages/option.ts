@@ -1,16 +1,26 @@
+let dataServerUrlInputElement = <HTMLInputElement>(
+  document.getElementById("data_server_url_input")
+);
+let equipmentNameInputElement = <HTMLInputElement>(
+  document.getElementById("equipment_name")
+);
+let delayUploadTimeInputElement = <HTMLInputElement>(
+  document.getElementById("delay_upload_time")
+);
+let repalceNewTabInputElement = <HTMLInputElement>(
+  document.getElementById("replace_new_opened_tab")
+);
+repalceNewTabInputElement.onchange = function () {
+  browser.storage.local
+    .set({
+      replaceNewTab: repalceNewTabInputElement.checked,
+    })
+    .catch((e) => console.error(e));
+};
+let password = <HTMLInputElement>document.getElementById("password");
 function onSave(e: Event) {
   e.stopImmediatePropagation();
   e.preventDefault();
-  let dataServerUrlInputElement = <HTMLInputElement>(
-    document.getElementById("data_server_url_input")
-  );
-  let equipmentNameInputElement = <HTMLInputElement>(
-    document.getElementById("equipment_name")
-  );
-  let delayUploadTimeInputElement = <HTMLInputElement>(
-    document.getElementById("delay_upload_time")
-  );
-  let password = <HTMLInputElement>document.getElementById("password");
   if (!dataServerUrlInputElement.value) {
     alert("Please input server url");
     return;
@@ -69,15 +79,9 @@ window.onload = function () {
       "equipmentName",
       "fontendServerUrl",
       "delayUploadTime",
+      "replaceNewTab",
     ])
     .then((res) => {
-      let dataServerUrlInputElement = <HTMLInputElement>(
-        document.getElementById("data_server_url_input")
-      );
-      dataServerUrlInputElement.value = res["dataServerUrl"] ?? "https://";
-      let equipmentNameInputElement = <HTMLInputElement>(
-        document.getElementById("equipment_name")
-      );
       if (res["equipmentName"]) {
         equipmentNameInputElement.value = res["equipmentName"];
       } else {
@@ -90,11 +94,14 @@ window.onload = function () {
           .catch((e) => console.error(e));
       }
       if (res["delayUploadTime"]) {
-        let delayUploadTimeInputElement = <HTMLSelectElement>(
-          document.getElementById("delay_upload_time")
-        );
         delayUploadTimeInputElement.value = res["delayUploadTime"];
       }
+      if (res["dataServerUrl"]) {
+        dataServerUrlInputElement.value = res["dataServerUrl"];
+      } else {
+        dataServerUrlInputElement.value = "https://";
+      }
+      repalceNewTabInputElement.checked = res["replaceNewTab"] ?? false;
     });
 };
 document.getElementById("save_button").addEventListener("click", onSave);
